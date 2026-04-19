@@ -1,0 +1,185 @@
+\chapter{Sprint 0: Project Initialization}
+
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+Sprint 0 corresponds to the initialization phase of the \textit{Advancia Trainings} project. Its purpose is to establish the foundations required for the following sprints by clarifying the project scope, identifying the main actors, defining the functional and non-functional requirements, selecting the technical environment, and designing the general architecture of the application.
+
+The product developed in this project is a web platform dedicated to the management of professional training programs. It allows learners to consult the training catalogue, register, complete an onboarding process, enroll in sessions, track their payments, and obtain recommendations through a chatbot. It also provides dashboards and reporting tools for administrators and super administrators.
+
+\section{Requirements Specification}
+\subsection{Actor Identification (User, Admin, Super Admin)}
+The system revolves around three principal actors:
+
+\begin{itemize}
+\item \textbf{User}: the learner or client of the platform. This actor can create an account, authenticate, complete onboarding, browse the training catalogue, consult the schedule, enroll in a training session, choose a payment method, access personal history, and receive recommendations.
+\item \textbf{Admin}: the operational manager of the platform. This actor supervises training activity, accesses the administration dashboard, imports training data from Excel files, and exports operational reports in Excel and PDF formats.
+\item \textbf{Super Admin}: the actor with the highest level of authorization. In addition to all administrator privileges, the super administrator manages trainings, manages users with full CRUD operations, manages administrator accounts with full CRUD operations, and supervises strategic indicators, growth analytics, and revenue monitoring.
+\end{itemize}
+
+\subsection{Functional Requirements}
+The main functional requirements retained for the platform are the following:
+
+\begin{enumerate}
+\item The system must allow a visitor to create a user account.
+\item The system must allow registered users to authenticate and end their session securely.
+\item The system must manage access rights according to the role of the connected actor.
+\item The system must display a searchable training catalogue.
+\item The system must allow filtering trainings by category and query.
+\item The system must display the details of each training course, including description, duration, format, schedule, and related trainings.
+\item The system must allow a user to consult the training calendar.
+\item The system must guide a new user through an onboarding form to capture domain, skills, certifications, and profile preferences.
+\item The system must generate personalized focus tracks and recommendations after onboarding.
+\item The system must allow an authenticated user to enroll in a training course.
+\item The system must allow a user to choose a payment method such as card, bank transfer, or on-site payment.
+\item The system must allow a user to consult personal information, enrollment history, and payment history from a profile page.
+\item The system must provide a chatbot capable of answering user questions and suggesting relevant trainings.
+\item The system must provide an administration dashboard with operational metrics, recent activity, category distribution, and enrollment trends.
+\item The system must provide a super administration dashboard with global analytics, user growth, revenue trends, catalogue indicators, and user management visibility.
+\item The system must allow the super administrator to manage trainings with create, read, update, and delete operations.
+\item The system must allow the super administrator to manage users with create, read, update, and delete operations.
+\item The system must allow the super administrator to manage administrator accounts with create, read, update, and delete operations.
+\item The system must allow administrators to import training workbooks from Excel files.
+\item The system must allow administrators to export reports in Excel format.
+\item The system must allow administrators to export reports in PDF format.
+\item The system must support multilingual interaction in English, French, and Arabic.
+\item The system must operate with MongoDB when available and keep a fallback dataset for demo mode when the database is unavailable.
+\end{enumerate}
+
+\subsection{Non-Functional Requirements}
+In addition to business functionalities, the application must satisfy the following non-functional requirements:
+
+\begin{itemize}
+\item \textbf{Security}: passwords must be hashed, sessions must be protected, and access must be controlled according to the role of each actor.
+\item \textbf{Performance}: catalogue consultation, dashboard display, and report generation must remain fluid for end users.
+\item \textbf{Reliability}: the application must remain usable even if the database is not connected, thanks to a fallback dataset.
+\item \textbf{Usability}: the platform must offer a clear, responsive, and intuitive interface accessible from desktop and mobile devices.
+\item \textbf{Maintainability}: the codebase must be structured into clear modules separating presentation, business logic, services, and persistence.
+\item \textbf{Scalability}: the architecture must support the addition of new reports, new training categories, and future AI upgrades without major redesign.
+\item \textbf{Portability}: the system must be deployable as a web application and accessible from modern browsers.
+\item \textbf{Internationalization}: the platform must support multiple interface languages and locale-aware presentation.
+\end{itemize}
+
+\section{Global Use Case Diagram}
+Figure~\ref{fig:global-use-case} presents the global use case diagram of the platform. It synthesizes the interactions between the three principal actors and the main services offered by the application.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/sprint0-use-case-diagram.png}
+\caption{Global use case diagram of the Advancia Trainings platform}
+\label{fig:global-use-case}
+\end{figure}
+
+The \textbf{User} actor interacts mainly with authentication, onboarding, catalogue consultation, enrollment, payment, profile consultation, and chatbot assistance. The \textbf{Admin} actor interacts with operational dashboards and import/export services. The \textbf{Super Admin} actor extends administrative privileges with training management and full CRUD supervision over users and administrators.
+
+\section{Product Backlog}
+The initial product backlog was formalized as a set of user stories ordered by business value and technical importance.
+
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{|p{1.2cm}|p{9.3cm}|p{2cm}|}
+\hline
+\textbf{ID} & \textbf{User Story} & \textbf{Priority} \\
+\hline
+US01 & As a visitor, I want to browse the training catalogue so that I can discover available programs. & High \\
+\hline
+US02 & As a visitor, I want to create an account so that I can access platform services. & High \\
+\hline
+US03 & As a registered user, I want to log in securely so that I can access my personal space. & High \\
+\hline
+US04 & As a new user, I want to complete onboarding so that the platform can personalize my recommendations. & High \\
+\hline
+US05 & As a user, I want to search and filter trainings so that I can quickly find relevant programs. & High \\
+\hline
+US06 & As a user, I want to consult training details and schedules so that I can evaluate a session before enrolling. & High \\
+\hline
+US07 & As a user, I want to enroll in a training and choose a payment method so that I can confirm my participation. & High \\
+\hline
+US08 & As a user, I want to consult my profile, enrollments, and payments so that I can track my learning activity. & Medium \\
+\hline
+US09 & As a user, I want to interact with a chatbot so that I can receive guidance and recommended trainings. & Medium \\
+\hline
+US10 & As an admin, I want to access an operational dashboard so that I can monitor platform activity. & High \\
+\hline
+US11 & As an admin, I want to import training data from Excel so that I can update the catalogue efficiently. & Medium \\
+\hline
+US12 & As an admin, I want to export reports in Excel and PDF so that I can share operational indicators. & Medium \\
+\hline
+US13 & As a super admin, I want to manage trainings so that I can control the catalogue lifecycle. & High \\
+\hline
+US14 & As a super admin, I want to manage users and administrators with full CRUD operations so that I can control access and governance. & High \\
+\hline
+US15 & As the system owner, I want role-based protection so that each actor accesses only authorized features. & High \\
+\hline
+\end{tabular}
+\caption{Initial product backlog}
+\label{tab:product-backlog}
+\end{table}
+
+\section{Sprint Planning}
+Sprint 0 focused on preparing the project and delivering the first stable technical foundation. The objective of this sprint was not only to initialize the repository, but also to make the application executable with the principal business flows already framed.
+
+The planning of Sprint 0 can be summarized as follows:
+
+\begin{itemize}
+\item \textbf{Sprint goal}: initialize the platform and establish a first operational base for future development sprints.
+\item \textbf{Selected backlog items}: account creation, authentication, role management, catalogue visualization, onboarding preparation, dashboards, reporting services, and import/export foundations.
+\item \textbf{Technical tasks}: define project structure, configure the development environment, design the domain model, prepare MongoDB schemas, create route protection, and expose the first API routes.
+\item \textbf{Expected deliverables}: a running web application, a structured folder architecture, protected dashboards, training catalogue pages, reporting endpoints, and a dataset ready for demo or MongoDB usage.
+\item \textbf{Exit criteria}: the application starts correctly, the core pages are reachable, the access rules are enforced, and the main data services are usable locally.
+\end{itemize}
+
+\section{Development Environment}
+The development environment adopted for this project is centered on local web development and rapid iteration. The platform is developed and tested on a Windows workstation through a command-line workflow and a local development server.
+
+\begin{itemize}
+\item \textbf{Operating system}: Windows.
+\item \textbf{Terminal}: PowerShell.
+\item \textbf{Execution mode}: local development server launched with \texttt{npm run dev}.
+\item \textbf{Package management}: \texttt{npm}.
+\item \textbf{Environment configuration}: \texttt{.env.local} based on \texttt{.env.example}.
+\item \textbf{Local application URL}: \texttt{http://localhost:3000}.
+\end{itemize}
+
+This environment allows fast development, local verification, iterative UI testing, and smooth integration between the frontend and backend parts of the application.
+
+\section{Software Environment}
+The software environment of the project is based on a modern JavaScript and TypeScript ecosystem. The main technologies used are:
+
+\begin{itemize}
+\item \textbf{Next.js 16}: main web framework used to structure pages, layouts, route handlers, and server rendering.
+\item \textbf{React 19}: user interface library used to build reusable components.
+\item \textbf{TypeScript}: language used to improve maintainability, typing, and reliability.
+\item \textbf{Tailwind CSS 4}: utility-first CSS framework used for the visual design of the interface.
+\item \textbf{Framer Motion}: library used for interface animation and interaction polish.
+\item \textbf{React Three Fiber and Drei}: libraries used to enrich the landing experience with lightweight 3D effects.
+\item \textbf{Recharts}: charting library used in dashboards and analytics views.
+\item \textbf{MongoDB and Mongoose}: database and object modeling tools used for persistence.
+\item \textbf{bcryptjs}: library used for password hashing.
+\item \textbf{jose}: library used for signed session token management.
+\item \textbf{Zod}: validation library used to secure request payloads.
+\item \textbf{XLSX}: library used for Excel import and export.
+\item \textbf{pdf-lib}: library used to generate PDF reports.
+\end{itemize}
+
+This technological stack offers a good balance between productivity, modularity, scalability, and user experience quality.
+
+\section{General Application Architecture}
+The architecture of the application follows a modular organization that clearly separates interface concerns from business logic and persistence.
+
+\begin{itemize}
+\item \textbf{Presentation layer}: the \texttt{app} folder contains the main routes, layouts, and API entry points, while the \texttt{frontend} folder contains reusable UI components, internationalization utilities, shared content, and presentation helpers.
+\item \textbf{Business layer}: the \texttt{backend/services} folder centralizes application use cases such as catalogue retrieval, dashboard aggregation, profile construction, and recommendation logic.
+\item \textbf{Security layer}: the \texttt{backend/auth} module manages registration, session creation, token verification, route guards, and role-based permissions.
+\item \textbf{Integration layer}: specific modules manage chatbot responses, payment processing, report generation, onboarding processing, and import/export workflows.
+\item \textbf{Data access layer}: the \texttt{backend/repositories} folder acts as an intermediary between business services and persistence.
+\item \textbf{Persistence layer}: the \texttt{backend/models} and \texttt{backend/db} folders define MongoDB schemas and database connection management.
+\item \textbf{Fallback mode}: when MongoDB is unavailable, the repository layer switches to a mock dataset so that the platform remains operational in demonstration mode.
+\end{itemize}
+
+Globally, the request flow can be summarized as follows: the user interacts with the interface, the request is routed through Next.js pages or API endpoints, business services process the request, repositories access data from MongoDB or the fallback dataset, and the response is returned to the interface. This architecture improves clarity, maintainability, and future extensibility.
+
+\section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+Sprint 0 established the essential foundations of the \textit{Advancia Trainings} platform. It clarified the project scope, identified the principal actors, defined the core requirements, selected the technical stack, and structured the global architecture of the application. This initialization phase created a stable basis for the next sprints, where business features can be enriched, secured, and optimized incrementally.

@@ -1,0 +1,61 @@
+@startuml
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor User
+actor Admin
+actor "Super Admin" as SuperAdmin
+
+SuperAdmin --|> Admin
+
+rectangle "Advancia Trainings Platform" {
+  usecase "Register" as UC_Register
+  usecase "Authenticate" as UC_Authenticate
+  usecase "Manage own profile" as UC_Profile
+  usecase "Browse training catalogue" as UC_Catalogue
+  usecase "Search and filter trainings" as UC_Filter
+  usecase "Consult training details" as UC_Details
+  usecase "Consult training calendar" as UC_Calendar
+  usecase "Enroll in trainings" as UC_Enroll
+  usecase "Choose payment method" as UC_Payment
+  usecase "Use chatbot" as UC_Chatbot
+  usecase "Receive notifications" as UC_Notifications
+
+  usecase "Access admin dashboard" as UC_AdminDashboard
+  usecase "Manage users" as UC_ManageUsers
+  usecase "Import data" as UC_Import
+  usecase "Export data" as UC_Export
+
+  usecase "Access super admin dashboard" as UC_SuperDashboard
+  usecase "Manage trainings" as UC_ManageTrainings
+  usecase "Manage admins" as UC_ManageAdmins
+}
+
+User --> UC_Register
+User --> UC_Authenticate
+User --> UC_Profile
+User --> UC_Catalogue
+User --> UC_Filter
+User --> UC_Details
+User --> UC_Calendar
+User --> UC_Enroll
+User --> UC_Payment
+User --> UC_Chatbot
+User --> UC_Notifications
+
+Admin --> UC_Authenticate
+Admin --> UC_Profile
+Admin --> UC_AdminDashboard
+Admin --> UC_ManageUsers
+Admin --> UC_Chatbot
+Admin --> UC_Import
+Admin --> UC_Export
+
+SuperAdmin --> UC_Authenticate
+SuperAdmin --> UC_SuperDashboard
+SuperAdmin --> UC_ManageTrainings
+SuperAdmin --> UC_ManageAdmins
+
+@enduml
