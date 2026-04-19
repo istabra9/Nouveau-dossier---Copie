@@ -121,6 +121,9 @@ export interface UserRecord {
   department: string;
   company: string;
   status: "active" | "pending";
+  emailVerified?: boolean;
+  verificationTokenHash?: string;
+  verificationTokenExpiresAt?: string;
   joinedAt: string;
   avatar: string;
   funnyAvatar?: string;
@@ -223,6 +226,7 @@ export interface SessionUser {
   department: string;
   avatar: string;
   focusTracks: string[];
+  emailVerified?: boolean;
 }
 
 export interface ChatbotReply {

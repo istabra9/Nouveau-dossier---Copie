@@ -24,6 +24,7 @@ export function toSessionUser(user: UserRecord): SessionUser {
     department: user.department,
     avatar: user.avatar,
     focusTracks: user.focusTracks,
+    emailVerified: user.emailVerified ?? false,
   };
 }
 

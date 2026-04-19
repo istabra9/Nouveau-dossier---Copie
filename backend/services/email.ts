@@ -168,6 +168,12 @@ export type AcceptanceEmailInput = {
   appUrl?: string;
 };
 
+export type ConfirmationEmailInput = {
+  to: string;
+  userName: string;
+  verifyUrl: string;
+};
+
 export type RejectionEmailInput = {
   to: string;
   userName: string;
@@ -200,6 +206,34 @@ function row(label: string, value?: string) {
     <td style="padding:6px 0;color:#8a5a60;font-size:12px;text-transform:uppercase;letter-spacing:0.12em;">${label}</td>
     <td style="padding:6px 0;font-weight:600;">${value}</td>
   </tr>`;
+}
+
+export function renderConfirmationEmail(input: ConfirmationEmailInput) {
+  const subject = "Confirm your Advancia Trainings account";
+
+  const html = shell(`
+    <h2 style="margin:0 0 12px;color:#91182f;">Welcome, ${input.userName}!</h2>
+    <p style="margin:0 0 12px;">Thanks for signing up to Advancia Trainings. Please confirm your email address so we can secure your account and keep you in the loop.</p>
+    <p style="margin:18px 0;">
+      <a href="${input.verifyUrl}" style="display:inline-block;background:#df3648;color:#fff;text-decoration:none;padding:12px 22px;border-radius:999px;font-weight:600;">Confirm my email</a>
+    </p>
+    <p style="margin:10px 0;color:#8a5a60;font-size:13px;">If the button does not work, paste this link into your browser:<br/><span style="word-break:break-all;color:#4a3438;">${input.verifyUrl}</span></p>
+    <p style="margin:14px 0 0;color:#8a5a60;font-size:12px;">This confirmation link expires in 24 hours. If you did not create this account, you can safely ignore this email.</p>
+  `);
+
+  const body = [
+    `Welcome, ${input.userName}!`,
+    "",
+    "Thanks for signing up to Advancia Trainings. Please confirm your email address by opening the link below:",
+    "",
+    input.verifyUrl,
+    "",
+    "This link expires in 24 hours. If you did not create this account, you can ignore this email.",
+    "",
+    "Advancia Trainings",
+  ].join("\n");
+
+  return { subject, html, body };
 }
 
 export function renderAcceptanceEmail(input: AcceptanceEmailInput) {

@@ -9,10 +9,18 @@ import {
   toSessionUser,
 } from "@/backend/auth/session";
 import {
+  buildVerificationUrl,
+  generateVerificationToken,
+} from "@/backend/auth/verification";
+import {
   createActivityLogRecord,
   createUser,
   findUserByEmail,
 } from "@/backend/repositories/platform-repository";
+import {
+  getEmailService,
+  renderConfirmationEmail,
+} from "@/backend/services/email";
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, "Full name is required."),
@@ -105,6 +113,7 @@ export async function POST(request: Request) {
 
   const passwordHash = await bcrypt.hash(parsed.data.password, 10);
   const { firstName, lastName } = splitName(parsed.data.name);
+  const verification = generateVerificationToken();
   const createdUser = await createUser({
     name: parsed.data.name,
     firstName,
@@ -117,6 +126,9 @@ export async function POST(request: Request) {
     department: parsed.data.department,
     company: parsed.data.company,
     status: "active",
+    emailVerified: false,
+    verificationTokenHash: verification.hash,
+    verificationTokenExpiresAt: verification.expiresAt,
     joinedAt: new Date().toISOString().slice(0, 10),
     avatar: parsed.data.avatarEmoji ?? buildAvatar(parsed.data.name),
     funnyAvatar: parsed.data.funnyAvatar ?? "Sunny Bunny",
@@ -132,6 +144,30 @@ export async function POST(request: Request) {
       certifications: [],
     },
   });
+
+  const verifyUrl = buildVerificationUrl(verification.token);
+  const confirmation = renderConfirmationEmail({
+    to: email,
+    userName: firstName,
+    verifyUrl,
+  });
+
+  void getEmailService()
+    .send({
+      to: email,
+      subject: confirmation.subject,
+      body: confirmation.body,
+      html: confirmation.html,
+      template: "signup-confirmation",
+      meta: { userId: createdUser.id },
+    })
+    .catch((error: unknown) => {
+      // eslint-disable-next-line no-console
+      console.error(
+        `[auth:register] failed to send confirmation email to ${email}:`,
+        error,
+      );
+    });
 
   await createActivityLogRecord({
     userId: createdUser.id,

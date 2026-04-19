@@ -248,6 +248,58 @@ export async function updateUserProfile(
   return updated ? serialise(updated) : nextUser;
 }
 
+export async function findUserByVerificationHash(verificationTokenHash: string) {
+  const dataset = await getPlatformDataset();
+  return (
+    dataset.users.find(
+      (user) => user.verificationTokenHash === verificationTokenHash,
+    ) ?? null
+  );
+}
+
+export async function setUserVerificationToken(
+  userId: string,
+  verificationTokenHash: string,
+  verificationTokenExpiresAt: string,
+) {
+  const connection = await connectToDatabase();
+  if (!connection) {
+    return null;
+  }
+
+  const updated = await UserModel.findOneAndUpdate(
+    { id: userId },
+    {
+      $set: {
+        verificationTokenHash,
+        verificationTokenExpiresAt,
+        emailVerified: false,
+      },
+    },
+    { new: true },
+  ).lean();
+
+  return updated ? serialise(updated) : null;
+}
+
+export async function markUserEmailVerified(userId: string) {
+  const connection = await connectToDatabase();
+  if (!connection) {
+    return null;
+  }
+
+  const updated = await UserModel.findOneAndUpdate(
+    { id: userId },
+    {
+      $set: { emailVerified: true },
+      $unset: { verificationTokenHash: "", verificationTokenExpiresAt: "" },
+    },
+    { new: true },
+  ).lean();
+
+  return updated ? serialise(updated) : null;
+}
+
 export async function updateUserPassword(userId: string, passwordHash: string) {
   const connection = await connectToDatabase();
   if (!connection) {
