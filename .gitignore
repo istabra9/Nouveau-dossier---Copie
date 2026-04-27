@@ -84,6 +84,9 @@ backend/data/*.local.json
 # Local DB export snapshots — contain user data + password hashes, never commit.
 advancia-db-export-*/
 
+# PM2 runtime logs
+/logs/
+
 # ---------------------------------------------------------------------------
 # Generated artifacts that can be rebuilt from source
 # ---------------------------------------------------------------------------
