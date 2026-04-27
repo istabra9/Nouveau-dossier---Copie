@@ -2,9 +2,9 @@ import { notFound } from "next/navigation";
 
 import { getCurrentUser } from "@/backend/auth/session";
 import { getTrainingPageData } from "@/backend/services/platform";
-import { CheckoutCard } from "@/frontend/components/catalogue/checkout-card";
 import { TrainingCard } from "@/frontend/components/catalogue/training-card";
 import { TrainingCover } from "@/frontend/components/catalogue/training-cover";
+import { TrainingExperienceCard } from "@/frontend/components/catalogue/training-experience-card";
 import { RequestEnrollmentButton } from "@/frontend/components/reservation/request-enrollment-button";
 import { Badge } from "@/frontend/components/ui/badge";
 import { translateTrainingFormat, translateTrainingLevel } from "@/frontend/i18n/helpers";
@@ -28,26 +28,39 @@ export default async function TrainingDetailPage({
   }
 
   const primarySchedule = detail.schedules[0] ?? null;
-  const trainerFallback =
+  const pageCopy =
     locale === "fr"
-      ? "Formateur certifie Advancia"
+      ? {
+          trainerFallback: "Formateur certifie Advancia",
+          durationLabel: "Duree",
+          formatLabel: "Format",
+          locationLabel: "Lieu",
+          overviewLabel: "Points forts ✨",
+          noScheduleLabel: "Dates sur demande. ✨",
+          happyLearning: "Apprentissage joyeux 😄",
+          relatedHeading: "Liens",
+        }
       : locale === "ar"
-        ? "Advancia certified trainer"
-        : "Advancia certified trainer";
-  const durationLabel =
-    locale === "fr" ? "Duree" : locale === "ar" ? "Duration" : "Duration";
-  const formatLabel =
-    locale === "fr" ? "Format" : locale === "ar" ? "Format" : "Format";
-  const locationLabel =
-    locale === "fr" ? "Lieu" : locale === "ar" ? "Location" : "Location";
-  const overviewLabel =
-    locale === "fr" ? "Infos" : locale === "ar" ? "Info" : "Info";
-  const noScheduleLabel =
-    locale === "fr"
-      ? "Dates sur demande."
-      : locale === "ar"
-        ? "Dates on request."
-        : "Dates on request.";
+        ? {
+            trainerFallback: "مدرب معتمد من Advancia",
+            durationLabel: "المدة",
+            formatLabel: "الصيغة",
+            locationLabel: "المكان",
+            overviewLabel: "أبرز النقاط ✨",
+            noScheduleLabel: "المواعيد عند الطلب. ✨",
+            happyLearning: "تعلم سعيد 😄",
+            relatedHeading: "روابط",
+          }
+        : {
+            trainerFallback: "Advancia certified trainer",
+            durationLabel: "Duration",
+            formatLabel: "Format",
+            locationLabel: "Location",
+            overviewLabel: "Highlights ✨",
+            noScheduleLabel: "Dates on request. ✨",
+            happyLearning: "Happy learning 😄",
+            relatedHeading: "Related",
+          };
 
   const sessionRange = primarySchedule
     ? `${formatDateLabel(primarySchedule.startDate, locale)} / ${formatDateLabel(primarySchedule.endDate, locale)}`
@@ -60,14 +73,14 @@ export default async function TrainingDetailPage({
   const location = primarySchedule
     ? `${primarySchedule.city} / ${primarySchedule.venue}`
     : displayFormat;
-  const trainer = primarySchedule?.instructor ?? trainerFallback;
+  const trainer = primarySchedule?.instructor ?? pageCopy.trainerFallback;
 
   const quickFacts = [
     { label: copy.training.instructor, value: trainer },
     { label: copy.training.nextSession, value: sessionRange },
-    { label: durationLabel, value: duration },
-    { label: formatLabel, value: displayFormat },
-    { label: locationLabel, value: location },
+    { label: pageCopy.durationLabel, value: duration },
+    { label: pageCopy.formatLabel, value: displayFormat },
+    { label: pageCopy.locationLabel, value: location },
   ];
 
   return (
@@ -80,6 +93,9 @@ export default async function TrainingDetailPage({
             <div className="space-y-6">
               <div className="flex flex-wrap items-center gap-3">
                 <Badge tone="dark">{detail.training.badge}</Badge>
+                <span className="rounded-full bg-[#fff0d8] px-4 py-2 text-sm font-medium text-foreground">
+                  {pageCopy.happyLearning}
+                </span>
                 <span className="rounded-full bg-brand-50 px-4 py-2 text-sm font-medium text-brand-700">
                   {translateTrainingLevel(detail.training.level, locale)}
                 </span>
@@ -112,8 +128,7 @@ export default async function TrainingDetailPage({
         </div>
 
         <div className="space-y-5">
-          <CheckoutCard
-            trainingSlug={detail.training.slug}
+          <TrainingExperienceCard
             trainer={trainer}
             sessionDate={sessionRange}
             duration={duration}
@@ -130,7 +145,7 @@ export default async function TrainingDetailPage({
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="surface-panel p-6">
-          <h2 className="text-2xl font-semibold">{overviewLabel}</h2>
+          <h2 className="text-2xl font-semibold">{pageCopy.overviewLabel}</h2>
 
           <div className="mt-6">
             <div className="text-sm font-medium text-ink-soft">{copy.training.category}</div>
@@ -194,7 +209,7 @@ export default async function TrainingDetailPage({
                     {copy.training.instructor}: {schedule.instructor}
                   </div>
                   <div className="mt-1 text-sm text-ink-soft">
-                    {formatLabel}: {translateTrainingFormat(schedule.format, locale)}
+                    {pageCopy.formatLabel}: {translateTrainingFormat(schedule.format, locale)}
                   </div>
                   <div className="mt-1 text-sm text-ink-soft">
                     {copy.training.seatsAvailable}: {schedule.seatsAvailable}
@@ -204,7 +219,7 @@ export default async function TrainingDetailPage({
             </div>
           ) : (
             <div className="mt-5 rounded-[24px] border border-dashed border-line bg-white/65 p-6 text-sm text-ink-soft">
-              {noScheduleLabel}
+              {pageCopy.noScheduleLabel}
             </div>
           )}
         </div>
@@ -215,7 +230,7 @@ export default async function TrainingDetailPage({
           <div>
             <div className="stat-chip w-fit">{copy.training.relatedPrograms}</div>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight">
-              {locale === "fr" ? "Liens" : locale === "ar" ? "Related" : "Related"}
+              {pageCopy.relatedHeading}
             </h2>
           </div>
           <div className="grid gap-5 lg:grid-cols-3">

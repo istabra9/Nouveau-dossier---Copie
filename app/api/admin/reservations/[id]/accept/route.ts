@@ -19,9 +19,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getCurrentUser();
-  if (!user || user.role !== "super_admin") {
+  if (!user || (user.role !== "super_admin" && user.role !== "admin")) {
     return NextResponse.json(
-      { ok: false, message: "Only a super administrator can accept requests." },
+      { ok: false, message: "Only administrators can accept requests." },
       { status: 403 },
     );
   }

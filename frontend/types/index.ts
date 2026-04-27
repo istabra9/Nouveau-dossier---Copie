@@ -2,6 +2,7 @@ export type Role = "super_admin" | "admin" | "user";
 export type AppLocale = "en" | "fr" | "ar";
 export type ThemePreference = "light" | "dark";
 export type UserSex = "female" | "male" | "other" | "prefer_not_to_say";
+export type OAuthProvider = "google" | "facebook" | "yahoo";
 
 export type TrainingLevel =
   | "Foundation"
@@ -37,7 +38,8 @@ export type ReportType =
   | "trainings"
   | "enrollments"
   | "revenue"
-  | "durations";
+  | "durations"
+  | "all";
 
 export interface Category {
   id: string;
@@ -108,14 +110,23 @@ export interface UserOnboarding {
   submittedAt?: string;
 }
 
+export interface UserOAuthAccount {
+  provider: OAuthProvider;
+  providerAccountId: string;
+  email?: string;
+  linkedAt: string;
+}
+
 export interface UserRecord {
   id: string;
   name: string;
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber?: string;
   age?: number;
   sex?: UserSex;
+  state?: string;
   uniqueId: string;
   role: Role;
   department: string;
@@ -124,13 +135,15 @@ export interface UserRecord {
   emailVerified?: boolean;
   verificationTokenHash?: string;
   verificationTokenExpiresAt?: string;
+  authProvider?: "local" | OAuthProvider;
+  oauthAccounts?: UserOAuthAccount[];
   joinedAt: string;
   avatar: string;
   funnyAvatar?: string;
   profilePicture?: string;
   focusTracks: string[];
   enrolledTrainingSlugs: string[];
-  passwordHash: string;
+  passwordHash?: string;
   preferences?: {
     language: AppLocale;
     theme: ThemePreference;
@@ -138,6 +151,9 @@ export interface UserRecord {
   currentTrainingName?: string;
   trainingStartDate?: string;
   trainingEndDate?: string;
+  currentTrainerName?: string;
+  currentTrainingDurationDays?: number;
+  currentTrainingDurationHours?: number;
   lastLoginAt?: string;
   onboardingCompleted?: boolean;
   onboarding?: UserOnboarding;
@@ -212,8 +228,8 @@ export interface DistributionPoint {
 export interface PopularTrainingRow {
   name: string;
   category: string;
+  trainerName: string;
   enrollments: number;
-  revenue: number;
   duration: number;
 }
 
@@ -245,6 +261,7 @@ export interface NotificationRecord {
   status: NotificationStatus;
   createdAt: string;
   link?: string;
+  readBy?: string[];
 }
 
 export interface ActivityLogRecord {

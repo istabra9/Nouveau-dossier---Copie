@@ -24,9 +24,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getCurrentUser();
-  if (!user || user.role !== "super_admin") {
+  if (!user || (user.role !== "super_admin" && user.role !== "admin")) {
     return NextResponse.json(
-      { ok: false, message: "Only a super administrator can reject requests." },
+      { ok: false, message: "Only administrators can reject requests." },
       { status: 403 },
     );
   }
@@ -80,6 +80,12 @@ export async function POST(
     userName: requester.firstName || requester.name,
     trainingTitle: training.title,
     reason: parsed.data.reason,
+    startDate: training.startDate,
+    endDate: training.endDate,
+    location: training.format,
+    trainerName: training.trainerName,
+    trainerEmail: training.trainerEmail,
+    description: training.summary,
     appUrl: process.env.NEXT_PUBLIC_APP_URL
       ? `${process.env.NEXT_PUBLIC_APP_URL}/trainings`
       : undefined,

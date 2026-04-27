@@ -4,9 +4,11 @@ import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
 
+import { SocialAuthButtons } from "@/frontend/components/auth/social-auth-buttons";
 import { useLocale } from "@/frontend/components/providers/locale-provider";
 import { Button } from "@/frontend/components/ui/button";
 import { Input } from "@/frontend/components/ui/input";
+import type { OAuthProvider } from "@/frontend/types";
 import { cn } from "@/frontend/utils/cn";
 
 const AVATAR_CHOICES = [
@@ -29,7 +31,12 @@ const containerVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut", staggerChildren: 0.06, delayChildren: 0.08 },
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+      staggerChildren: 0.06,
+      delayChildren: 0.08,
+    },
   },
 };
 
@@ -38,10 +45,18 @@ const itemVariants: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
 };
 
-export function RegisterForm() {
+export function RegisterForm({
+  oauthError,
+  providers,
+}: {
+  oauthError?: string;
+  providers?: OAuthProvider[];
+}) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [avatar, setAvatar] = useState<(typeof AVATAR_CHOICES)[number]>(AVATAR_CHOICES[0]);
+  const [avatar, setAvatar] = useState<(typeof AVATAR_CHOICES)[number]>(
+    AVATAR_CHOICES[0],
+  );
   const { messages } = useLocale();
   const t = messages.auth;
 
@@ -74,7 +89,10 @@ export function RegisterForm() {
         }),
       });
 
-      const payload = (await response.json()) as { message?: string; redirectTo?: string };
+      const payload = (await response.json()) as {
+        message?: string;
+        redirectTo?: string;
+      };
 
       if (!response.ok) {
         setError(payload.message ?? t.registerErrorGeneric);
@@ -101,6 +119,8 @@ export function RegisterForm() {
         <div className="stat-chip w-fit">{t.registerEyebrow}</div>
         <h1 className="text-4xl font-semibold tracking-tight">{t.registerTitle}</h1>
       </motion.div>
+
+      <SocialAuthButtons mode="register" providers={providers} />
 
       <form onSubmit={handleSubmit} className="mt-8 grid gap-4 sm:grid-cols-2">
         <motion.div variants={itemVariants} className="space-y-3 sm:col-span-2">
@@ -212,6 +232,16 @@ export function RegisterForm() {
             required
           />
         </motion.div>
+
+        {oauthError ? (
+          <motion.p
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl bg-brand-50 px-4 py-3 text-sm text-brand-700 sm:col-span-2"
+          >
+            {oauthError}
+          </motion.p>
+        ) : null}
 
         {error ? (
           <motion.p

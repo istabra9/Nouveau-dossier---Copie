@@ -12,9 +12,11 @@ import type {
   ActivityLogRecord,
   EnrollmentRecord,
   NotificationRecord,
+  OAuthProvider,
   PaymentRecord,
   PlatformDataset,
   Training,
+  UserOAuthAccount,
   UserRecord,
 } from "@/frontend/types";
 
@@ -73,6 +75,28 @@ async function loadMongoDataset(): Promise<PlatformDataset | null> {
   }
 }
 
+async function findMongoUserById(userId: string) {
+  const connection = await connectToDatabase();
+
+  if (!connection) {
+    return null;
+  }
+
+  const user = await UserModel.findOne({ id: userId }).lean();
+  return user ? serialise(user as unknown as UserRecord) : null;
+}
+
+async function findMongoTrainingBySlug(slug: string) {
+  const connection = await connectToDatabase();
+
+  if (!connection) {
+    return null;
+  }
+
+  const training = await TrainingModel.findOne({ slug }).lean();
+  return training ? serialise(training as unknown as Training) : null;
+}
+
 export async function getPlatformDataset() {
   return (await loadMongoDataset()) ?? mockDataset;
 }
@@ -83,11 +107,53 @@ export async function findUserByEmail(email: string) {
 }
 
 export async function findUserById(userId: string) {
+  const mongoUser = await findMongoUserById(userId);
+
+  if (mongoUser) {
+    return mongoUser;
+  }
+
   const dataset = await getPlatformDataset();
   return dataset.users.find((user) => user.id === userId) ?? null;
 }
 
+export async function findUserByOAuthAccount(
+  provider: OAuthProvider,
+  providerAccountId: string,
+) {
+  const connection = await connectToDatabase();
+
+  if (connection) {
+    const user = await UserModel.findOne({
+      oauthAccounts: {
+        $elemMatch: { provider, providerAccountId },
+      },
+    }).lean();
+
+    if (user) {
+      return serialise(user as unknown as UserRecord);
+    }
+  }
+
+  const dataset = await getPlatformDataset();
+  return (
+    dataset.users.find((user) =>
+      user.oauthAccounts?.some(
+        (account) =>
+          account.provider === provider &&
+          account.providerAccountId === providerAccountId,
+      ),
+    ) ?? null
+  );
+}
+
 export async function findTrainingBySlug(slug: string) {
+  const mongoTraining = await findMongoTrainingBySlug(slug);
+
+  if (mongoTraining) {
+    return mongoTraining;
+  }
+
   const dataset = await getPlatformDataset();
   return dataset.trainings.find((training) => training.slug === slug) ?? null;
 }
@@ -203,6 +269,7 @@ export async function updateUserProfile(
       | "lastName"
       | "age"
       | "sex"
+      | "phoneNumber"
       | "department"
       | "company"
       | "funnyAvatar"
@@ -330,6 +397,61 @@ export async function updateUserLastLogin(userId: string, timestamp: string) {
   return updated ? serialise(updated) : null;
 }
 
+export async function linkOAuthAccountToUser(
+  userId: string,
+  account: UserOAuthAccount,
+  input?: {
+    authProvider?: UserRecord["authProvider"];
+    emailVerified?: boolean;
+    profilePicture?: string;
+  },
+) {
+  const existingUser = await findUserById(userId);
+
+  if (!existingUser) {
+    return null;
+  }
+
+  const oauthAccounts = [
+    ...(existingUser.oauthAccounts ?? []).filter(
+      (entry) =>
+        !(
+          entry.provider === account.provider &&
+          entry.providerAccountId === account.providerAccountId
+        ),
+    ),
+    account,
+  ];
+
+  const nextUser: UserRecord = {
+    ...existingUser,
+    authProvider: existingUser.authProvider ?? input?.authProvider ?? "local",
+    oauthAccounts,
+    emailVerified: input?.emailVerified ?? existingUser.emailVerified,
+    profilePicture: existingUser.profilePicture ?? input?.profilePicture,
+  };
+
+  const connection = await connectToDatabase();
+  if (!connection) {
+    return nextUser;
+  }
+
+  const updated = await UserModel.findOneAndUpdate(
+    { id: userId },
+    {
+      $set: {
+        authProvider: nextUser.authProvider,
+        oauthAccounts: nextUser.oauthAccounts,
+        emailVerified: nextUser.emailVerified,
+        profilePicture: nextUser.profilePicture,
+      },
+    },
+    { new: true },
+  ).lean();
+
+  return updated ? serialise(updated as unknown as UserRecord) : nextUser;
+}
+
 export async function createNotificationRecord(input: Omit<NotificationRecord, "id">) {
   const notification: NotificationRecord = {
     id: `not-${crypto.randomUUID().slice(0, 8)}`,
@@ -343,6 +465,24 @@ export async function createNotificationRecord(input: Omit<NotificationRecord, "
 
   const created = await NotificationModel.create(notification);
   return serialise(created.toObject());
+}
+
+export async function markNotificationsReadForUser(
+  userId: string,
+  notificationIds?: string[],
+) {
+  const connection = await connectToDatabase();
+  if (!connection) {
+    return;
+  }
+
+  const filter = notificationIds?.length
+    ? { id: { $in: notificationIds } }
+    : {};
+
+  await NotificationModel.updateMany(filter, {
+    $addToSet: { readBy: userId },
+  });
 }
 
 export async function createActivityLogRecord(input: Omit<ActivityLogRecord, "id">) {
@@ -369,12 +509,14 @@ export async function updateUserById(
       | "lastName"
       | "name"
       | "email"
+      | "phoneNumber"
       | "company"
       | "department"
       | "status"
       | "role"
       | "age"
       | "sex"
+      | "state"
       | "funnyAvatar"
       | "profilePicture"
       | "preferences"

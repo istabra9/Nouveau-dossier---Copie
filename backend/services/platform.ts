@@ -11,7 +11,6 @@ import type {
   Category,
   DashboardMetric,
   DistributionPoint,
-  PaymentRecord,
   PopularTrainingRow,
   Role,
   SessionUser,
@@ -48,24 +47,11 @@ function buildMonthlyTrend<T>(
 }
 
 function buildRecentActivity(
-  payments: PaymentRecord[],
   enrollments: Awaited<ReturnType<typeof getPlatformDataset>>["enrollments"],
   schedules: Awaited<ReturnType<typeof getPlatformDataset>>["schedules"],
   trainingsBySlug: Record<string, Awaited<ReturnType<typeof getPlatformDataset>>["trainings"][number]>,
 ) {
   const items: ActivityItem[] = [
-    ...payments.map((payment) => ({
-      id: payment.id,
-      title: `${trainingsBySlug[payment.trainingSlug]?.title ?? "Training"} payment ${
-        payment.status === "paid" ? "captured" : "logged"
-      }`,
-      description: `${formatCurrency(payment.amount)} via ${payment.method}`,
-      at: payment.paidAt,
-      tone:
-        payment.status === "paid"
-          ? ("success" as const)
-          : ("brand" as const),
-    })),
     ...enrollments.map((enrollment) => ({
       id: enrollment.id,
       title: `Enrollment updated for ${
@@ -90,6 +76,34 @@ function buildRecentActivity(
   return items
     .sort((left, right) => right.at.localeCompare(left.at))
     .slice(0, 7);
+}
+
+function buildManagedTeamMembers(
+  users: Awaited<ReturnType<typeof getPlatformDataset>>["users"],
+  enrollments: Awaited<ReturnType<typeof getPlatformDataset>>["enrollments"],
+  trainingsBySlug: Record<string, Awaited<ReturnType<typeof getPlatformDataset>>["trainings"][number]>,
+) {
+  return users.map((user) => {
+    const latestEnrollment = enrollments
+      .filter((enrollment) => enrollment.userId === user.id)
+      .sort((left, right) => right.startedAt.localeCompare(left.startedAt))[0];
+
+    if (!latestEnrollment) {
+      return user;
+    }
+
+    const training = trainingsBySlug[latestEnrollment.trainingSlug];
+
+    return {
+      ...user,
+      currentTrainingName: training?.title ?? latestEnrollment.trainingSlug,
+      trainingStartDate: training?.startDate ?? latestEnrollment.startedAt,
+      trainingEndDate: training?.endDate,
+      currentTrainerName: training?.trainerName,
+      currentTrainingDurationDays: training?.durationDays,
+      currentTrainingDurationHours: training?.totalHours,
+    };
+  });
 }
 
 function withCategoryCounts(categories: Category[], trainings: Awaited<ReturnType<typeof getPlatformDataset>>["trainings"]) {
@@ -486,18 +500,12 @@ export async function getDashboardData(sessionUser: SessionUser) {
       const enrollments = dataset.enrollments.filter(
         (enrollment) => enrollment.trainingSlug === training.slug,
       );
-      const revenue = dataset.payments
-        .filter(
-          (payment) =>
-            payment.trainingSlug === training.slug && payment.status === "paid",
-        )
-        .reduce((sum, payment) => sum + payment.amount, 0);
 
       return {
         name: training.title,
         category: categoriesBySlug[training.categorySlug]?.name ?? "Unknown",
+        trainerName: training.trainerName,
         enrollments: enrollments.length,
-        revenue,
         duration: training.totalHours,
       };
     })
@@ -512,7 +520,6 @@ export async function getDashboardData(sessionUser: SessionUser) {
     ...enrollment,
     training: trainingsBySlug[enrollment.trainingSlug],
   }));
-  const recommendations = await buildTrainingRecommendations(sessionUser);
   const relevantNotifications = dataset.notifications
     .filter(
       (notification) =>
@@ -565,6 +572,11 @@ export async function getDashboardData(sessionUser: SessionUser) {
       fill: "#ef4444",
     },
   ];
+  const teamMembers = buildManagedTeamMembers(
+    dataset.users,
+    dataset.enrollments,
+    trainingsBySlug,
+  );
 
   return {
     metrics: buildMetrics(sessionUser.role, sessionUser.id, dataset),
@@ -575,7 +587,6 @@ export async function getDashboardData(sessionUser: SessionUser) {
     durationDistribution,
     popularTrainings,
     recentActivity: buildRecentActivity(
-      dataset.payments,
       dataset.enrollments,
       dataset.schedules,
       trainingsBySlug,
@@ -583,12 +594,11 @@ export async function getDashboardData(sessionUser: SessionUser) {
     upcomingSessions,
     myPayments,
     myTrainingCards,
-    recommendations,
     currentUser,
     profileCompleteness: computeProfileCompleteness(currentUser),
     ...getCurrentTrainingSummary(sessionUser.id, dataset, trainingsBySlug),
     categories: dataset.categories,
-    teamMembers: dataset.users,
+    teamMembers,
     trainings: dataset.trainings,
     notifications: relevantNotifications,
     activityLogs: relevantActivityLogs,
@@ -596,7 +606,7 @@ export async function getDashboardData(sessionUser: SessionUser) {
     topUsersByActivity,
     trainingStatusDistribution,
     assistants: {
-      user: "Alexa",
+      user: "Advancia Support",
       superAdmin: "Alex",
     },
   };
@@ -648,7 +658,6 @@ export async function getProfilePageData(sessionUser: SessionUser) {
     user,
     myEnrollments,
     myPayments,
-    recommendations: await buildTrainingRecommendations(sessionUser),
     notifications,
     activityLogs,
     profileCompleteness: computeProfileCompleteness(user),

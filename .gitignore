@@ -77,10 +77,12 @@ lerna-debug.log*
 # ---------------------------------------------------------------------------
 backend/data/sent-emails.json
 backend/data/enrollment-requests.json
-backend/data/game-scores.json
 
 # If you add more JSON caches next to the stubs, they land here too.
 backend/data/*.local.json
+
+# Local DB export snapshots — contain user data + password hashes, never commit.
+advancia-db-export-*/
 
 # ---------------------------------------------------------------------------
 # Generated artifacts that can be rebuilt from source

@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Cairo, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 
-import { LanguageSwitcher } from "@/frontend/components/layout/language-switcher";
 import { LocaleProvider } from "@/frontend/components/providers/locale-provider";
 import { ThemeProvider } from "@/frontend/components/providers/theme-provider";
-import { ThemeSwitcher } from "@/frontend/components/layout/theme-switcher";
 import { getCurrentLocale, getLocaleDirection } from "@/frontend/i18n/server";
 
 import "./globals.css";
@@ -36,7 +34,7 @@ export const metadata: Metadata = {
     template: "%s | Advancia Trainings",
   },
   description:
-    "Premium training management platform for catalogue discovery, enrollments, analytics, payments, and operational reporting.",
+    "Cheerful training platform for discovery, enrollments, guided learning journeys, analytics, and operational reporting.",
 };
 
 export default async function RootLayout({
@@ -50,17 +48,22 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={getLocaleDirection(locale)}
+      data-theme="light"
       suppressHydrationWarning
+      style={{ colorScheme: "light" }}
       className={`${display.variable} ${body.variable} ${mono.variable} ${arabic.variable} h-full scroll-smooth antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('advancia-theme');var t=(s==='dark'||s==='light')?s:(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-full bg-background text-foreground">
         <ThemeProvider>
           <LocaleProvider initialLocale={locale}>
-            <div className="relative flex min-h-screen flex-col overflow-x-hidden">
-              {children}
-              <ThemeSwitcher />
-              <LanguageSwitcher />
-            </div>
+            <div className="relative flex min-h-screen flex-col overflow-x-hidden">{children}</div>
           </LocaleProvider>
         </ThemeProvider>
       </body>

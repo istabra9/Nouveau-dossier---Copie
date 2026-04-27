@@ -1,4 +1,3 @@
-import { ActivityFeed } from "@/frontend/components/dashboard/activity-feed";
 import {
   AreaTrendCard,
   BarTrendCard,
@@ -6,11 +5,9 @@ import {
 } from "@/frontend/components/dashboard/analytics-panels";
 import { InsightsPanel } from "@/frontend/components/dashboard/insights-panel";
 import { DashboardSpotlight } from "@/frontend/components/dashboard/dashboard-spotlight";
-import { MetricCard } from "@/frontend/components/dashboard/metric-card";
 import { NotificationComposer } from "@/frontend/components/dashboard/notification-composer";
 import { NotificationsPanel } from "@/frontend/components/dashboard/notifications-panel";
 import { QuickActionsPanel } from "@/frontend/components/dashboard/quick-actions-panel";
-import { TrainingTable } from "@/frontend/components/dashboard/training-table";
 import { UserManagementPanel } from "@/frontend/components/dashboard/user-management-panel";
 import { requireRole } from "@/backend/auth/guards";
 import { getDashboardData } from "@/backend/services/platform";
@@ -18,52 +15,47 @@ import { getDashboardData } from "@/backend/services/platform";
 export default async function AdminDashboardPage() {
   const user = await requireRole(["admin", "super_admin"], "/dashboard/admin");
   const dashboard = await getDashboardData(user);
+  const adminMetrics = dashboard.metrics.filter((metric) => metric.id !== "revenue");
+  const liveUsers = adminMetrics.find((metric) => metric.id === "users")?.value ?? "0";
+  const trainingCatalogue = adminMetrics.find((metric) => metric.id === "trainings")?.value ?? "0";
+  const enrollments = adminMetrics.find((metric) => metric.id === "enrollments")?.value ?? "0";
 
   return (
-    <div className="space-y-6">
+    <div className="executive-red-stage space-y-6">
       <DashboardSpotlight
         eyebrow="Admin dashboard"
         title="Operations view."
-        description="Users. Reports. Delivery."
+        titleEmoji="⚙️"
+        description="Users. Trainings. Delivery."
         tone="operations"
-        chips={["Excel", "PDF", "Charts"]}
+        chips={["Users", "Trainings", "Delivery"]}
+        profile={{ name: user.name, avatar: user.avatar, emoji: "🧑‍💼" }}
         stats={[
-          { label: "Live users", value: dashboard.metrics[0]?.value ?? "0" },
-          { label: "Revenue pulse", value: dashboard.metrics.at(-1)?.value ?? "0" },
-          { label: "Hot categories", value: String(dashboard.categoryDistribution.length) },
+          { label: "Live users", value: liveUsers, emoji: "🧑‍🎓" },
+          { label: "Trainings", value: trainingCatalogue, emoji: "📚" },
+          { label: "Enrollments", value: enrollments, emoji: "🎓" },
         ]}
       />
-      <div className="grid gap-5 md:grid-cols-5">
-        {dashboard.metrics.map((metric, index) => (
-          <MetricCard
-            key={metric.id}
-            metric={metric}
-            index={index}
-            className={index === 0 ? "md:col-span-2" : "md:col-span-1"}
-          />
-        ))}
-      </div>
-      <div className="dashboard-grid">
-        <div className="space-y-5 lg:col-span-8">
-          <AreaTrendCard
-            title="Revenue"
-            description="Paid"
-            data={dashboard.revenueTrend}
-          />
+      <div className="executive-red-block dashboard-grid p-5 sm:p-6">
+        <div className="space-y-5 lg:col-span-5">
           <BarTrendCard
             title="Enrollments"
             description="Recent"
             data={dashboard.enrollmentTrend}
           />
-          <TrainingTable rows={dashboard.popularTrainings} />
         </div>
-        <div className="space-y-5 lg:col-span-4">
+        <div className="space-y-5 lg:col-span-7">
+          <AreaTrendCard
+            title="Learner growth"
+            description="User signups"
+            data={dashboard.userGrowth}
+            color="#91182f"
+          />
           <DistributionDonutCard
             title="Categories"
             description="Demand"
             data={dashboard.categoryDistribution}
           />
-          <ActivityFeed items={dashboard.recentActivity} />
           <InsightsPanel
             insights={[
               {
@@ -84,7 +76,10 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      <section id="stats" className="dashboard-grid scroll-mt-24">
+      <section
+        id="stats"
+        className="executive-red-block dashboard-grid scroll-mt-24 p-5 sm:p-6"
+      >
         <div className="space-y-5 lg:col-span-7">
           <DistributionDonutCard
             title="Training status"
@@ -114,14 +109,17 @@ export default async function AdminDashboardPage() {
         </div>
       </section>
 
-      <section id="users" className="scroll-mt-24">
+      <section id="users" className="executive-red-block scroll-mt-24 p-5 sm:p-6">
         <UserManagementPanel
           initialUsers={dashboard.teamMembers.filter((item) => item.role === "user")}
-          title="Users management"
+          title="👥 Users management"
         />
       </section>
 
-      <section id="notifications" className="scroll-mt-24">
+      <section
+        id="notifications"
+        className="executive-red-block scroll-mt-24 p-5 sm:p-6"
+      >
         <NotificationsPanel
           items={dashboard.notifications}
           description="Operational alerts and sent updates."

@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "8mb",
     },
+    optimizePackageImports: [
+      "lucide-react",
+      "framer-motion",
+      "date-fns",
+      "recharts",
+    ],
   },
 };
 

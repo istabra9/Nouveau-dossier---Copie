@@ -47,6 +47,14 @@ export async function loginAction(
     };
   }
 
+  if (!user.passwordHash) {
+    return {
+      status: "error" as const,
+      message:
+        "This account uses social sign-in. Continue with Google, Facebook, or Yahoo.",
+    };
+  }
+
   const isValid = await bcrypt.compare(parsed.data.password, user.passwordHash);
 
   if (!isValid) {

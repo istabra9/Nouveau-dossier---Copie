@@ -2,10 +2,12 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
 } from "react";
 
 import type { ThemePreference } from "@/frontend/types";
@@ -16,6 +18,7 @@ type ThemeContextValue = {
 };
 
 const storageKey = "advancia-theme";
+const defaultTheme: ThemePreference = "light";
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 function applyTheme(theme: ThemePreference) {
@@ -23,34 +26,47 @@ function applyTheme(theme: ThemePreference) {
   document.documentElement.style.colorScheme = theme;
 }
 
+function subscribe() {
+  return () => {};
+}
+
+function getDomTheme(): ThemePreference {
+  const attr = document.documentElement.dataset.theme;
+  return attr === "dark" || attr === "light" ? attr : defaultTheme;
+}
+
+function getServerTheme(): ThemePreference {
+  return defaultTheme;
+}
+
 export function ThemeProvider({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [theme, setThemeState] = useState<ThemePreference>(() => {
-    if (typeof window === "undefined") {
-      return "light";
-    }
-
-    const storedTheme = window.localStorage.getItem(storageKey);
-    return storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
-  });
+  const domTheme = useSyncExternalStore(subscribe, getDomTheme, getServerTheme);
+  const [override, setOverride] = useState<ThemePreference | null>(null);
+  const theme = override ?? domTheme;
 
   useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
+    if (override === null) {
+      return;
+    }
+    applyTheme(override);
+    try {
+      window.localStorage.setItem(storageKey, override);
+    } catch {
+      // ignore storage failures (private mode, quota, etc.)
+    }
+  }, [override]);
+
+  const setTheme = useCallback((next: ThemePreference) => {
+    setOverride(next);
+  }, []);
 
   const value = useMemo<ThemeContextValue>(
-    () => ({
-      theme,
-      setTheme(nextTheme) {
-        setThemeState(nextTheme);
-        window.localStorage.setItem(storageKey, nextTheme);
-        applyTheme(nextTheme);
-      },
-    }),
-    [theme],
+    () => ({ theme, setTheme }),
+    [theme, setTheme],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
@@ -59,7 +75,7 @@ export function ThemeProvider({
 export function useTheme() {
   return (
     useContext(ThemeContext) ?? {
-      theme: "light",
+      theme: defaultTheme,
       setTheme: () => undefined,
     }
   );

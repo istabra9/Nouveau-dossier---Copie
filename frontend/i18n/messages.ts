@@ -150,6 +150,7 @@ type Messages = {
     layoutBody: string;
     loginEyebrow: string;
     loginTitle: string;
+    loginSubtitle: string;
     loginEmail: string;
     loginEmailPlaceholder: string;
     loginPassword: string;
@@ -164,6 +165,8 @@ type Messages = {
     registerFullNamePlaceholder: string;
     registerEmail: string;
     registerEmailPlaceholder: string;
+    registerPhone: string;
+    registerPhonePlaceholder: string;
     registerCompany: string;
     registerCompanyPlaceholder: string;
     registerDepartment: string;
@@ -251,10 +254,10 @@ type Messages = {
     superAdmin: {
       executive: string;
       users: string;
+      management: string;
       trainings: string;
       importExport: string;
       insights: string;
-      settings: string;
       profile: string;
     };
     admin: {
@@ -263,7 +266,6 @@ type Messages = {
       importExport: string;
       stats: string;
       notifications: string;
-      settings: string;
       profile: string;
     };
     user: {
@@ -279,6 +281,14 @@ type Messages = {
     workspace: string;
     searchPlaceholder: string;
     logout: string;
+  };
+  notificationBell: {
+    label: string;
+    title: string;
+    markAllRead: string;
+    empty: string;
+    allCaughtUp: string;
+    unreadCount: string;
   };
   common: {
     send: string;
@@ -479,15 +489,15 @@ const enMessages: Messages = {
   },
   chatbot: {
     title: "Assistant",
-    subtitle: "Ask Alexa.",
-    welcome: "Ask Alexa.",
+    subtitle: "Ask Advancia Support.",
+    welcome: "Ask Advancia Support.",
     suggestions: [
       "Recommend a short AI training",
       "I need a project management path",
       "Show me Microsoft data courses",
     ],
     loading: "Thinking...",
-    inputPlaceholder: "Ask Alexa",
+    inputPlaceholder: "Ask Advancia Support",
     roleAssistant: "assistant",
     roleUser: "you",
     typing: "is typing...",
@@ -504,10 +514,10 @@ const enMessages: Messages = {
     },
     bots: {
       alexa: {
-        name: "Alexa",
+        name: "Advancia Support",
         role: "Training guide",
         bubble:
-          "Hi! I'm Alexa. Tell me your goal and I'll suggest the best training path for you.",
+          "Hi! I'm Advancia Support. Tell me your goal and I'll suggest the best training path for you.",
         suggestions: [
           "Recommend a cybersecurity training",
           "I need a cloud certification path",
@@ -531,11 +541,12 @@ const enMessages: Messages = {
   },
   auth: {
     backHome: "Back home",
-    layoutTitle: "The polished gateway into premium training operations.",
+    layoutTitle: "Your cheerful gateway to premium training. ✨",
     layoutBody:
-      "Role-aware workspaces for super admins, admins, and learners.",
+      "Friendly workspaces for super admins, admins, and learners — built to make every day a little brighter. 🌈",
     loginEyebrow: "Sign in",
     loginTitle: "Welcome back",
+    loginSubtitle: "So happy to see you again — let's get you back in! 💖",
     loginEmail: "Email",
     loginEmailPlaceholder: "you@company.com",
     loginPassword: "Password",
@@ -547,13 +558,15 @@ const enMessages: Messages = {
     registerEyebrow: "Create account",
     registerTitle: "Join Advancia",
     registerFullName: "Full name",
-    registerFullNamePlaceholder: "Maya Jaziri",
+    registerFullNamePlaceholder: "Your full name",
     registerEmail: "Email",
-    registerEmailPlaceholder: "maya@company.com",
+    registerEmailPlaceholder: "you@example.com",
+    registerPhone: "Phone number",
+    registerPhonePlaceholder: "Your phone number",
     registerCompany: "Company",
-    registerCompanyPlaceholder: "Atlas Logistics",
+    registerCompanyPlaceholder: "Your company",
     registerDepartment: "Department",
-    registerDepartmentPlaceholder: "Operations",
+    registerDepartmentPlaceholder: "Your department",
     registerPassword: "Password",
     registerPasswordPlaceholder: "Create a strong password",
     registerSubmit: "Create account",
@@ -564,7 +577,7 @@ const enMessages: Messages = {
     registerErrorNetwork:
       "Registration failed. Please check your connection and try again.",
     registerAge: "Age",
-    registerAgePlaceholder: "27",
+    registerAgePlaceholder: "Your age",
     registerSex: "Sex",
     registerSexFemale: "Female",
     registerSexMale: "Male",
@@ -638,10 +651,10 @@ const enMessages: Messages = {
     superAdmin: {
       executive: "Executive overview",
       users: "Users management",
+      management: "Accounts management",
       trainings: "Training control",
       importExport: "Import & export",
       insights: "Smart insights",
-      settings: "Settings",
       profile: "My profile",
     },
     admin: {
@@ -650,7 +663,6 @@ const enMessages: Messages = {
       importExport: "Import & export",
       stats: "Statistics",
       notifications: "Notifications",
-      settings: "Settings",
       profile: "My profile",
     },
     user: {
@@ -666,6 +678,14 @@ const enMessages: Messages = {
     workspace: "Advancia workspace",
     searchPlaceholder: "Search reports, users, trainings...",
     logout: "Log out",
+  },
+  notificationBell: {
+    label: "Open notifications",
+    title: "Notifications",
+    markAllRead: "Mark all as read",
+    empty: "No notifications yet.",
+    allCaughtUp: "You're all caught up",
+    unreadCount: "{count} unread",
   },
   common: {
     send: "Send",
@@ -877,15 +897,15 @@ const frMessages: Messages = {
   },
   chatbot: {
     title: "Assistant",
-    subtitle: "Demandez a Alexa.",
-    welcome: "Demandez a Alexa.",
+    subtitle: "Demandez a Advancia Support.",
+    welcome: "Demandez a Advancia Support.",
     suggestions: [
       "Recommande une formation IA courte",
       "Je veux un parcours gestion de projet",
       "Montre-moi les formations Microsoft data",
     ],
     loading: "Recherche...",
-    inputPlaceholder: "Demandez a Alexa",
+    inputPlaceholder: "Demandez a Advancia Support",
     roleAssistant: "assistant",
     roleUser: "vous",
     typing: "ecrit...",
@@ -902,10 +922,10 @@ const frMessages: Messages = {
     },
     bots: {
       alexa: {
-        name: "Alexa",
+        name: "Advancia Support",
         role: "Guide de formation",
         bubble:
-          "Salut ! Je suis Alexa. Dis-moi ton objectif et je te conseille la meilleure formation.",
+          "Salut ! Je suis Advancia Support. Dis-moi ton objectif et je te conseille la meilleure formation.",
         suggestions: [
           "Recommande une formation cybersecurite",
           "Je veux un parcours certification cloud",
@@ -929,11 +949,12 @@ const frMessages: Messages = {
   },
   auth: {
     backHome: "Accueil",
-    layoutTitle: "L'acces elegant a vos operations de formation premium.",
+    layoutTitle: "Votre acces joyeux aux formations premium. ✨",
     layoutBody:
-      "Espaces de travail selon les roles pour super admins, admins et apprenants.",
+      "Des espaces de travail conviviaux pour super admins, admins et apprenants — pour rendre chaque journee un peu plus lumineuse. 🌈",
     loginEyebrow: "Connexion",
     loginTitle: "Bon retour",
+    loginSubtitle: "Ravis de vous revoir — on vous reconnecte ! 💖",
     loginEmail: "Email",
     loginEmailPlaceholder: "vous@entreprise.com",
     loginPassword: "Mot de passe",
@@ -945,13 +966,15 @@ const frMessages: Messages = {
     registerEyebrow: "Inscription",
     registerTitle: "Rejoindre Advancia",
     registerFullName: "Nom complet",
-    registerFullNamePlaceholder: "Maya Jaziri",
+    registerFullNamePlaceholder: "Votre nom complet",
     registerEmail: "Email",
-    registerEmailPlaceholder: "maya@entreprise.com",
+    registerEmailPlaceholder: "vous@exemple.com",
+    registerPhone: "Numero de telephone",
+    registerPhonePlaceholder: "Votre numero de telephone",
     registerCompany: "Entreprise",
-    registerCompanyPlaceholder: "Atlas Logistics",
+    registerCompanyPlaceholder: "Votre entreprise",
     registerDepartment: "Departement",
-    registerDepartmentPlaceholder: "Operations",
+    registerDepartmentPlaceholder: "Votre departement",
     registerPassword: "Mot de passe",
     registerPasswordPlaceholder: "Choisissez un mot de passe solide",
     registerSubmit: "Creer le compte",
@@ -962,7 +985,7 @@ const frMessages: Messages = {
     registerErrorNetwork:
       "Inscription echouee. Verifiez votre connexion et reessayez.",
     registerAge: "Age",
-    registerAgePlaceholder: "27",
+    registerAgePlaceholder: "Votre age",
     registerSex: "Sexe",
     registerSexFemale: "Femme",
     registerSexMale: "Homme",
@@ -1036,10 +1059,10 @@ const frMessages: Messages = {
     superAdmin: {
       executive: "Vue executive",
       users: "Gestion des utilisateurs",
+      management: "Gestion des comptes",
       trainings: "Pilotage des formations",
       importExport: "Import & export",
       insights: "Insights intelligents",
-      settings: "Parametres",
       profile: "Mon profil",
     },
     admin: {
@@ -1048,7 +1071,6 @@ const frMessages: Messages = {
       importExport: "Import & export",
       stats: "Statistiques",
       notifications: "Notifications",
-      settings: "Parametres",
       profile: "Mon profil",
     },
     user: {
@@ -1064,6 +1086,14 @@ const frMessages: Messages = {
     workspace: "Espace Advancia",
     searchPlaceholder: "Rechercher rapports, utilisateurs, formations...",
     logout: "Se deconnecter",
+  },
+  notificationBell: {
+    label: "Ouvrir les notifications",
+    title: "Notifications",
+    markAllRead: "Tout marquer comme lu",
+    empty: "Aucune notification.",
+    allCaughtUp: "Tout est a jour",
+    unreadCount: "{count} non lues",
   },
   common: {
     send: "Envoyer",
@@ -1274,15 +1304,15 @@ const arMessages: Messages = {
   },
   chatbot: {
     title: "المساعد",
-    subtitle: "اسأل أليكسا.",
-    welcome: "اسأل أليكسا.",
+    subtitle: "اسأل Advancia Support.",
+    welcome: "اسأل Advancia Support.",
     suggestions: [
       "اقترح دورة قصيرة في الذكاء الاصطناعي",
       "أريد مسارا في إدارة المشاريع",
       "اعرض لي دورات Microsoft للبيانات",
     ],
     loading: "أفكر...",
-    inputPlaceholder: "اسأل أليكسا",
+    inputPlaceholder: "اسأل Advancia Support",
     roleAssistant: "المساعد",
     roleUser: "أنت",
     typing: "يكتب الآن...",
@@ -1299,10 +1329,10 @@ const arMessages: Messages = {
     },
     bots: {
       alexa: {
-        name: "أليكسا",
+        name: "Advancia Support",
         role: "مرشدة الدورات",
         bubble:
-          "مرحبا! أنا أليكسا. أخبرني بهدفك وسأقترح لك أفضل مسار تدريبي.",
+          "مرحبا! أنا Advancia Support. أخبرني بهدفك وسأقترح لك أفضل مسار تدريبي.",
         suggestions: [
           "اقترح دورة في الأمن السيبراني",
           "أريد مسار شهادة سحابية",
@@ -1326,11 +1356,12 @@ const arMessages: Messages = {
   },
   auth: {
     backHome: "الرئيسية",
-    layoutTitle: "البوابة الأنيقة لإدارة عمليات التدريب الفاخرة.",
+    layoutTitle: "بوابتك المرحة إلى التدريب الفاخر ✨",
     layoutBody:
-      "مساحات عمل حسب الدور للمشرفين العامين والمشرفين والمتعلمين.",
+      "مساحات عمل ودودة للمشرفين العامين والمشرفين والمتعلمين — لجعل كل يوم أكثر إشراقاً 🌈",
     loginEyebrow: "تسجيل الدخول",
     loginTitle: "أهلا بعودتك",
+    loginSubtitle: "سعداء بعودتك — لنعدك إلى الداخل ! 💖",
     loginEmail: "البريد الإلكتروني",
     loginEmailPlaceholder: "you@company.com",
     loginPassword: "كلمة المرور",
@@ -1342,13 +1373,15 @@ const arMessages: Messages = {
     registerEyebrow: "إنشاء حساب",
     registerTitle: "انضم إلى Advancia",
     registerFullName: "الاسم الكامل",
-    registerFullNamePlaceholder: "Maya Jaziri",
+    registerFullNamePlaceholder: "اسمك الكامل",
     registerEmail: "البريد الإلكتروني",
-    registerEmailPlaceholder: "maya@company.com",
+    registerEmailPlaceholder: "you@example.com",
+    registerPhone: "رقم الهاتف",
+    registerPhonePlaceholder: "رقم هاتفك",
     registerCompany: "الشركة",
-    registerCompanyPlaceholder: "Atlas Logistics",
+    registerCompanyPlaceholder: "شركتك",
     registerDepartment: "القسم",
-    registerDepartmentPlaceholder: "العمليات",
+    registerDepartmentPlaceholder: "قسمك",
     registerPassword: "كلمة المرور",
     registerPasswordPlaceholder: "اختر كلمة مرور قوية",
     registerSubmit: "إنشاء الحساب",
@@ -1359,7 +1392,7 @@ const arMessages: Messages = {
     registerErrorNetwork:
       "فشل التسجيل. تحقق من اتصالك ثم أعد المحاولة.",
     registerAge: "العمر",
-    registerAgePlaceholder: "27",
+    registerAgePlaceholder: "عمرك",
     registerSex: "الجنس",
     registerSexFemale: "أنثى",
     registerSexMale: "ذكر",
@@ -1433,10 +1466,10 @@ const arMessages: Messages = {
     superAdmin: {
       executive: "نظرة تنفيذية",
       users: "إدارة المستخدمين",
+      management: "إدارة الحسابات",
       trainings: "إدارة الدورات",
       importExport: "استيراد وتصدير",
       insights: "تحليلات ذكية",
-      settings: "الإعدادات",
       profile: "ملفي الشخصي",
     },
     admin: {
@@ -1445,7 +1478,6 @@ const arMessages: Messages = {
       importExport: "استيراد وتصدير",
       stats: "الإحصائيات",
       notifications: "الإشعارات",
-      settings: "الإعدادات",
       profile: "ملفي الشخصي",
     },
     user: {
@@ -1461,6 +1493,14 @@ const arMessages: Messages = {
     workspace: "مساحة Advancia",
     searchPlaceholder: "ابحث في التقارير والمستخدمين والدورات...",
     logout: "تسجيل الخروج",
+  },
+  notificationBell: {
+    label: "فتح الإشعارات",
+    title: "الإشعارات",
+    markAllRead: "تحديد الكل كمقروء",
+    empty: "لا توجد إشعارات.",
+    allCaughtUp: "لا إشعارات جديدة",
+    unreadCount: "{count} غير مقروءة",
   },
   common: {
     send: "إرسال",

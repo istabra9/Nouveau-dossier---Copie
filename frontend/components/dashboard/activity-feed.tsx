@@ -7,14 +7,14 @@ export function ActivityFeed({ items }: { items: ActivityItem[] }) {
       <div className="space-y-1">
         <h3 className="text-lg font-semibold">Recent activity</h3>
         <p className="text-sm text-ink-soft">
-          The latest enrollment, payment, and schedule events across the platform.
+          The latest enrollment and schedule events across the platform.
         </p>
       </div>
       <div className="mt-6 space-y-4">
         {items.map((item) => (
           <div
             key={item.id}
-            className="flex gap-4 rounded-[24px] border border-white/70 bg-white/70 p-4"
+            className="flex gap-4 rounded-[24px] border border-line bg-surface p-4"
           >
             <div
               className={`mt-1 h-3 w-3 rounded-full ${

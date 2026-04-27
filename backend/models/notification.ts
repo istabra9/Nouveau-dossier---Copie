@@ -11,6 +11,7 @@ const NotificationSchema = new Schema(
     status: { type: String, required: true, default: "unread" },
     createdAt: { type: String, required: true },
     link: { type: String },
+    readBy: { type: [String], default: [] },
   },
   { timestamps: true },
 );

@@ -18,6 +18,7 @@ Advancia Trainings is a full-stack training platform built with Next.js, Node.js
 
 - Responsive homepage with animated hero, catalogue preview, and calendar preview
 - Secure register, login, logout, onboarding, and password change flows
+- Social sign-in with Google, Facebook, and Yahoo when provider credentials are configured
 - Exactly 3 roles: `User`, `Admin`, `Super Administrator`
 - Preloaded Super Administrator: `Ramzy Sassi`
 - Protected role-based routes
@@ -28,7 +29,7 @@ Advancia Trainings is a full-stack training platform built with Next.js, Node.js
   - language preference
   - theme preference
   - current training dates
-- User dashboard with Alexa assistant
+- User dashboard with Advancia Support assistant
 - Admin dashboard with:
   - KPI cards
   - charts
@@ -137,7 +138,7 @@ MongoDB-ready models included:
 - Browse trainings
 - Enroll and pay
 - View notifications and activity history
-- Use Alexa for recommendations
+- Use Advancia Support for recommendations
 
 ### Admin
 
@@ -160,7 +161,7 @@ MongoDB-ready models included:
 
 ## Assistants
 
-### Alexa
+### Advancia Support
 
 - User-facing bunny assistant
 - Helps choose the right training
@@ -209,6 +210,15 @@ Required values:
 - `PAYMENT_PROVIDER`
 - `DEFAULT_CURRENCY`
 
+Optional OAuth values:
+
+- `GOOGLE_OAUTH_CLIENT_ID`
+- `GOOGLE_OAUTH_CLIENT_SECRET`
+- `FACEBOOK_OAUTH_CLIENT_ID`
+- `FACEBOOK_OAUTH_CLIENT_SECRET`
+- `YAHOO_OAUTH_CLIENT_ID`
+- `YAHOO_OAUTH_CLIENT_SECRET`
+
 Example file: [.env.example](/C:/Users/user/OneDrive/Bureau/Nouveau%20dossier/.env.example)
 
 ## Local Setup
@@ -224,7 +234,7 @@ npm install
 Default local URI:
 
 ```text
-mongodb://127.0.0.1:27017/advancia-trainings
+mongodb://127.0.0.1:27017/advancia
 ```
 
 3. Seed the database
@@ -278,6 +288,6 @@ Note: on this Windows setup, Next may print non-blocking SWC native warnings and
 
 ## Notes for Future AI Integration
 
-- Alexa and Alex already use dedicated backend logic and isolated entry points
+- Advancia Support and Alex already use dedicated backend logic and isolated entry points
 - The chatbot engine can be swapped later with a real LLM service without rewriting the UI
 - The analytics and recommendation layers already expose structured data suitable for future AI orchestration

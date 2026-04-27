@@ -2,7 +2,7 @@ import type { AppLocale } from "@/frontend/types";
 
 export const localeCookieName = "advancia-locale";
 export const locales: AppLocale[] = ["en", "fr", "ar"];
-export const defaultLocale: AppLocale = "en";
+export const defaultLocale: AppLocale = "fr";
 
 export const localeMeta: Record<
   AppLocale,

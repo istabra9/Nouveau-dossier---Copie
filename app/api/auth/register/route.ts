@@ -21,13 +21,34 @@ import {
   getEmailService,
   renderConfirmationEmail,
 } from "@/backend/services/email";
+import { onboardingDomains } from "@/frontend/content/onboarding";
+
+const registrationDomainIds = new Set(onboardingDomains.map((item) => item.id));
+const registrationDomainTracks = new Map(
+  onboardingDomains.map((item) => [item.id, item.focusTracks]),
+);
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, "Full name is required."),
   email: z.email("Use a valid email address."),
+  phoneNumber: z
+    .string()
+    .trim()
+    .max(24, "Phone number is too long.")
+    .regex(/^[+()0-9\s-]+$/, "Use a valid phone number.")
+    .optional()
+    .or(z.literal("")),
   company: z.string().trim().min(2, "Company is required."),
   department: z.string().trim().min(2, "Department is required."),
   password: z.string().min(8, "Password must be at least 8 characters."),
+  interestDomains: z
+    .array(z.string())
+    .max(4, "You can choose up to 4 training interests.")
+    .refine((values) => values.every((value) => registrationDomainIds.has(value)), {
+      message: "Invalid training interests.",
+    })
+    .optional()
+    .default([]),
   age: z.number().int().min(10).max(120).optional(),
   sex: z.enum(["female", "male", "other"]).optional(),
   funnyAvatar: z.string().trim().min(1).max(60).optional(),
@@ -77,6 +98,18 @@ function inferFocusTracks(department: string) {
   return ["business-productivity"];
 }
 
+function deriveRegisterFocusTracks(interestDomains: string[], department: string) {
+  const mapped = new Set<string>();
+
+  for (const domainId of interestDomains) {
+    for (const track of registrationDomainTracks.get(domainId) ?? []) {
+      mapped.add(track);
+    }
+  }
+
+  return mapped.size ? Array.from(mapped) : inferFocusTracks(department);
+}
+
 export async function POST(request: Request) {
   let body: unknown;
 
@@ -119,6 +152,7 @@ export async function POST(request: Request) {
     firstName,
     lastName,
     email,
+    phoneNumber: parsed.data.phoneNumber?.trim() || undefined,
     age: parsed.data.age,
     sex: parsed.data.sex,
     uniqueId: `ADV-USR-${Math.floor(Math.random() * 900000 + 100000)}`,
@@ -129,19 +163,24 @@ export async function POST(request: Request) {
     emailVerified: false,
     verificationTokenHash: verification.hash,
     verificationTokenExpiresAt: verification.expiresAt,
+    authProvider: "local",
     joinedAt: new Date().toISOString().slice(0, 10),
     avatar: parsed.data.avatarEmoji ?? buildAvatar(parsed.data.name),
     funnyAvatar: parsed.data.funnyAvatar ?? "Sunny Bunny",
-    focusTracks: inferFocusTracks(parsed.data.department),
+    focusTracks: deriveRegisterFocusTracks(
+      parsed.data.interestDomains,
+      parsed.data.department,
+    ),
     enrolledTrainingSlugs: [],
     passwordHash,
-    preferences: { language: "en", theme: "light" },
+    preferences: { language: "en", theme: "dark" },
     onboardingCompleted: false,
     onboarding: {
-      domain: "",
+      domain: parsed.data.interestDomains[0] ?? "",
       managesPeople: null,
       skills: [],
       certifications: [],
+      goals: parsed.data.interestDomains,
     },
   });
 
@@ -162,7 +201,6 @@ export async function POST(request: Request) {
       meta: { userId: createdUser.id },
     })
     .catch((error: unknown) => {
-      // eslint-disable-next-line no-console
       console.error(
         `[auth:register] failed to send confirmation email to ${email}:`,
         error,

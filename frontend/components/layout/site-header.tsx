@@ -1,17 +1,22 @@
 import Link from "next/link";
-import { ChevronDown, Globe, Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 import { logoutAction } from "@/backend/auth/actions";
 import { dashboardHomeByRole } from "@/backend/auth/constants";
-import { getCurrentUser } from "@/backend/auth/session";
+import { LanguageSwitcher } from "@/frontend/components/layout/language-switcher";
+import { ThemeSwitcher } from "@/frontend/components/layout/theme-switcher";
 import { BrandMark } from "@/frontend/components/shared/brand-mark";
 import { Button } from "@/frontend/components/ui/button";
 import { Input } from "@/frontend/components/ui/input";
 import { getMessages } from "@/frontend/i18n/messages";
 import { getCurrentLocale } from "@/frontend/i18n/server";
+import type { SessionUser } from "@/frontend/types";
 
-export async function SiteHeader() {
-  const user = await getCurrentUser();
+type SiteHeaderProps = {
+  user: SessionUser | null;
+};
+
+export async function SiteHeader({ user }: SiteHeaderProps) {
   const locale = await getCurrentLocale();
   const copy = getMessages(locale);
 
@@ -58,11 +63,9 @@ export async function SiteHeader() {
             </Link>
           </nav>
 
-          <button className="hidden h-12 w-12 items-center justify-center rounded-full border border-line bg-surface text-foreground lg:flex" aria-label={copy.language.select}>
-            <Globe className="h-5 w-5" />
-          </button>
-
           <div className="ml-auto flex items-center gap-3">
+            <ThemeSwitcher className="shrink-0" />
+            <LanguageSwitcher className="shrink-0" />
             {user ? (
               <>
                 <Link href={user.role === "user" ? "/profile" : dashboardHomeByRole[user.role]}>

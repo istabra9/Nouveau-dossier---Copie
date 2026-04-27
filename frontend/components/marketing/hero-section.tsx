@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { CalendarDays, MapPin, PlayCircle, Search, Sparkles } from "lucide-react";
+import { CalendarDays, PlayCircle, Search, Sparkles } from "lucide-react";
 
 import { officialBrandStats, getOfficialHeroCopy } from "@/frontend/content/advancia-official";
-import { HeroScene3DLazy } from "@/frontend/components/three/hero-scene-3d-lazy";
 import { AnimatedCounter } from "@/frontend/components/shared/animated-counter";
 import { Reveal } from "@/frontend/components/shared/reveal";
 import { Button } from "@/frontend/components/ui/button";
@@ -24,15 +23,8 @@ const heroCopy = {
     search: "Search a training",
     find: "Find training",
     calendar: "View calendar",
+    videoLabel: "Video background",
     stats: ["Programs", "Tracks", "Formats"],
-    cards: {
-      oneTitle: "Live calendar",
-      oneText: "Dates in view",
-      twoTitle: "Hybrid flow",
-      twoText: "Online or onsite",
-      threeTitle: "Advancia",
-      threeText: "Tunis and remote",
-    },
   },
   fr: {
     eyebrow: "Advancia Trainings",
@@ -41,32 +33,18 @@ const heroCopy = {
     search: "Rechercher une formation",
     find: "Trouver",
     calendar: "Calendrier",
+    videoLabel: "Fond video",
     stats: ["Formations", "Domaines", "Formats"],
-    cards: {
-      oneTitle: "Calendrier live",
-      oneText: "Dates visibles",
-      twoTitle: "Mode hybride",
-      twoText: "En ligne ou sur site",
-      threeTitle: "Advancia",
-      threeText: "Tunis et remote",
-    },
   },
   ar: {
     eyebrow: "Advancia Trainings",
-    title: "Train. Certify. Advance.",
-    body: "Live sessions. Expert trainers. Premium learning.",
-    search: "Search a training",
-    find: "Find training",
-    calendar: "View calendar",
-    stats: ["Programs", "Tracks", "Formats"],
-    cards: {
-      oneTitle: "Live calendar",
-      oneText: "Dates in view",
-      twoTitle: "Hybrid flow",
-      twoText: "Online or onsite",
-      threeTitle: "Advancia",
-      threeText: "Tunis and remote",
-    },
+    title: "تدرب. اعتمد. تقدم.",
+    body: "جلسات مباشرة. مدربون خبراء. تعلم فاخر.",
+    search: "ابحث عن دورة",
+    find: "ابحث",
+    calendar: "عرض التقويم",
+    videoLabel: "فيديو الخلفية",
+    stats: ["البرامج", "المسارات", "الصيغ"],
   },
 } as const;
 
@@ -82,92 +60,77 @@ export async function HeroSection({
   return (
     <section className="section-wrap py-8 sm:py-10">
       <div className="hero-media-shell relative overflow-hidden rounded-[40px] border border-white/12 bg-[#12090d] text-white shadow-[0_34px_100px_rgba(34,12,16,0.36)]">
-        <div className="marketing-video-shell absolute inset-0">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            className="hero-media-video absolute inset-0 h-full w-full object-cover opacity-55"
-          >
-            <source
-              src="https://videos.pexels.com/video-files/3129957/3129957-uhd_2560_1440_25fps.mp4"
-              type="video/mp4"
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,9,13,0.96)_0%,rgba(18,9,13,0.86)_35%,rgba(18,9,13,0.72)_100%)]" />
+          <div
+            className="absolute inset-0 opacity-[0.16]"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, rgba(255,255,255,0.72) 0.8px, transparent 1px)",
+              backgroundSize: "18px 18px",
+              backgroundPosition: "0 0, 9px 9px",
+            }}
+          />
+          <div className="absolute -bottom-16 -left-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(140,18,34,0.42)_0%,rgba(140,18,34,0.16)_42%,transparent_72%)] blur-3xl" />
+          <div className="absolute -top-20 right-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(255,170,146,0.12)_0%,transparent_68%)] blur-3xl" />
+
+          <div className="absolute right-[-8rem] top-[-3rem] h-[46rem] w-[46rem] rounded-full border border-white/8 opacity-60">
+            <div className="absolute inset-[5%] rounded-full border border-white/7" />
+            <div className="absolute inset-[12%] rounded-full border border-white/6" />
+            <div
+              className="absolute inset-[6%] rounded-full opacity-45"
+              style={{
+                backgroundImage:
+                  "repeating-linear-gradient(0deg, transparent 0, transparent 34px, rgba(255,255,255,0.05) 35px, transparent 36px), repeating-linear-gradient(90deg, transparent 0, transparent 42px, rgba(255,255,255,0.045) 43px, transparent 44px)",
+                maskImage:
+                  "radial-gradient(circle at center, transparent 0%, black 57%, black 72%, transparent 78%)",
+              }}
             />
-          </video>
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,9,13,0.94)_0%,rgba(18,9,13,0.78)_36%,rgba(18,9,13,0.42)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,166,140,0.22),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(223,54,72,0.22),transparent_32%)]" />
+            <div
+              className="absolute inset-[10%] rounded-full opacity-24"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, rgba(255,255,255,0.8) 0.8px, transparent 1px)",
+                backgroundSize: "14px 14px",
+                maskImage:
+                  "radial-gradient(circle at 48% 50%, transparent 0%, black 52%, black 68%, transparent 77%)",
+              }}
+            />
+            <div className="absolute left-[17%] top-[25%] h-28 w-40 rounded-full border border-white/8 opacity-25 blur-[1px]" />
+            <div className="absolute left-[28%] top-[42%] h-24 w-52 rounded-full border border-white/8 opacity-20 blur-[1px]" />
+            <div className="absolute right-[22%] top-[38%] h-20 w-32 rounded-full border border-white/8 opacity-18 blur-[1px]" />
+          </div>
         </div>
 
-        <div className="relative p-6 sm:p-8 lg:min-h-[640px] lg:p-10 xl:p-12">
-          <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:gap-10">
-            <Reveal className="flex flex-col justify-center lg:pr-8">
-              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/16 bg-white/8 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white/82 backdrop-blur">
-                <Sparkles className="h-4 w-4" />
-                {officialHero.badge}
+        <div className="relative p-6 sm:p-8 lg:min-h-[480px] lg:p-10 xl:p-12">
+          <Reveal className="flex flex-col justify-center">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/16 bg-white/8 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white/82 backdrop-blur">
+              <Sparkles className="h-4 w-4" />
+              {officialHero.badge}
+            </div>
+
+            <h1 className="mt-6 max-w-3xl text-5xl font-semibold tracking-[-0.05em] text-balance sm:text-6xl xl:text-7xl">
+              {hero.title}
+            </h1>
+
+            <p className="mt-5 max-w-2xl text-base text-white/76 sm:text-lg">
+              {officialHero.description}
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/trainings/calendar"
+                className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-white/16"
+              >
+                <CalendarDays className="h-4 w-4" />
+                {hero.calendar}
+              </Link>
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-5 py-3 text-sm text-white/78 backdrop-blur">
+                <PlayCircle className="h-4 w-4" />
+                {hero.videoLabel}
               </div>
-
-              <h1 className="mt-6 max-w-3xl text-5xl font-semibold tracking-[-0.05em] text-balance sm:text-6xl xl:text-7xl">
-                {hero.title}
-              </h1>
-
-              <p className="mt-5 max-w-2xl text-base text-white/76 sm:text-lg">
-                {officialHero.description}
-              </p>
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link
-                  href="/trainings/calendar"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-white/16"
-                >
-                  <CalendarDays className="h-4 w-4" />
-                  {hero.calendar}
-                </Link>
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-5 py-3 text-sm text-white/78 backdrop-blur">
-                  <PlayCircle className="h-4 w-4" />
-                  Video background
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal
-              delay={0.08}
-              className="relative hidden items-center justify-center lg:flex"
-            >
-              <div className="relative h-[500px] w-full max-w-[500px]">
-                <div className="pointer-events-none absolute left-0 top-8 z-20 w-56 rounded-[26px] border border-white/12 bg-white/10 p-5 backdrop-blur-md float-slow">
-                  <div className="text-xs uppercase tracking-[0.2em] text-white/58">
-                    {hero.cards.oneTitle}
-                  </div>
-                  <div className="mt-3 text-xl font-semibold text-white">
-                    {hero.cards.oneText}
-                  </div>
-                  <div className="mt-3 inline-flex items-center gap-2 text-sm text-white/72">
-                    <CalendarDays className="h-4 w-4" />
-                    Jan to Jun
-                  </div>
-                </div>
-
-                <div className="pointer-events-none absolute bottom-10 right-3 z-20 w-56 rounded-[26px] border border-white/12 bg-white/10 p-5 backdrop-blur-md float-reverse">
-                  <div className="text-xs uppercase tracking-[0.2em] text-white/58">
-                    {hero.cards.twoTitle}
-                  </div>
-                  <div className="mt-3 text-xl font-semibold text-white">
-                    {hero.cards.twoText}
-                  </div>
-                  <div className="mt-3 inline-flex items-center gap-2 text-sm text-white/72">
-                    <MapPin className="h-4 w-4" />
-                    {hero.cards.threeText}
-                  </div>
-                </div>
-
-                <div className="absolute inset-6 rounded-[38px] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),transparent_45%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] backdrop-blur-[2px]">
-                  <HeroScene3DLazy />
-                </div>
-              </div>
-            </Reveal>
-          </div>
+            </div>
+          </Reveal>
 
           <Reveal delay={0.12} className="relative z-30 mx-auto mt-8 w-full max-w-[1020px]">
             <form

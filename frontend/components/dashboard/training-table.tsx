@@ -7,7 +7,7 @@ export function TrainingTable({ rows }: { rows: PopularTrainingRow[] }) {
       <div className="space-y-1">
         <h3 className="text-lg font-semibold">Popular trainings</h3>
         <p className="text-sm text-ink-soft">
-          Enrollment demand, category mix, and revenue concentration.
+          Enrollment demand, category mix, trainer assignment, and duration.
         </p>
       </div>
       <div className="mt-6 overflow-x-auto">
@@ -16,8 +16,8 @@ export function TrainingTable({ rows }: { rows: PopularTrainingRow[] }) {
             <tr>
               <th className="pb-3 font-medium">Training</th>
               <th className="pb-3 font-medium">Category</th>
+              <th className="pb-3 font-medium">Trainer</th>
               <th className="pb-3 font-medium">Enrollments</th>
-              <th className="pb-3 font-medium">Revenue</th>
               <th className="pb-3 font-medium">Hours</th>
             </tr>
           </thead>
@@ -26,8 +26,8 @@ export function TrainingTable({ rows }: { rows: PopularTrainingRow[] }) {
               <tr key={row.name} className="border-t border-line">
                 <td className="py-4 font-medium">{row.name}</td>
                 <td className="py-4 text-ink-soft">{row.category}</td>
+                <td className="py-4 text-ink-soft">{row.trainerName}</td>
                 <td className="py-4">{row.enrollments}</td>
-                <td className="py-4">{formatCurrency(row.revenue)}</td>
                 <td className="py-4">{row.duration}h</td>
               </tr>
             ))}

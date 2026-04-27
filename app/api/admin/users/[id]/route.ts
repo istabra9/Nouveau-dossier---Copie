@@ -12,6 +12,13 @@ import {
 const updateUserSchema = z.object({
   firstName: z.string().min(1).optional(),
   lastName: z.string().min(1).optional(),
+  phoneNumber: z
+    .string()
+    .trim()
+    .min(8, "Phone number is required.")
+    .max(24, "Phone number is too long.")
+    .regex(/^[+()0-9\s-]+$/, "Use a valid phone number.")
+    .optional(),
   company: z.string().min(2).optional(),
   department: z.string().min(2).optional(),
   status: z.enum(["active", "pending"]).optional(),

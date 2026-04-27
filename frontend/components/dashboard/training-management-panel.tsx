@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { TrainingRecommendationStars } from "@/frontend/components/catalogue/training-recommendation-stars";
 import { Button } from "@/frontend/components/ui/button";
 import { Input } from "@/frontend/components/ui/input";
 import { Select } from "@/frontend/components/ui/select";
@@ -33,6 +34,7 @@ export function TrainingManagementPanel({
   const [trainings, setTrainings] = useState(initialTrainings);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | Training["status"]>("all");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | string>("all");
   const [page, setPage] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const [createState, setCreateState] = useState<CreateTrainingState>({
@@ -55,6 +57,10 @@ export function TrainingManagementPanel({
         return false;
       }
 
+      if (categoryFilter !== "all" && training.categorySlug !== categoryFilter) {
+        return false;
+      }
+
       if (!normalized) {
         return true;
       }
@@ -63,12 +69,13 @@ export function TrainingManagementPanel({
         .toLowerCase()
         .includes(normalized);
     });
-  }, [search, statusFilter, trainings]);
+  }, [categoryFilter, search, statusFilter, trainings]);
 
   const totalPages = Math.max(1, Math.ceil(filteredTrainings.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
   const paginatedTrainings = filteredTrainings.slice(
-    (page - 1) * pageSize,
-    page * pageSize,
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
   );
 
   async function refreshView() {
@@ -271,7 +278,7 @@ export function TrainingManagementPanel({
           </div>
         </form>
 
-        <div className="mt-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px]">
+        <div className="mt-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px_220px]">
           <Input
             value={search}
             onChange={(event) => {
@@ -280,6 +287,20 @@ export function TrainingManagementPanel({
             }}
             placeholder="Search trainings"
           />
+          <Select
+            value={categoryFilter}
+            onChange={(event) => {
+              setCategoryFilter(event.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="all">All categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.slug}>
+                {category.name}
+              </option>
+            ))}
+          </Select>
           <Select
             value={statusFilter}
             onChange={(event) => {
@@ -320,6 +341,9 @@ export function TrainingManagementPanel({
                 <tr key={training.id} className="border-t border-line align-top">
                   <td className="py-4">
                     <div className="font-medium">{training.title}</div>
+                    <div className="mt-1.5">
+                      <TrainingRecommendationStars rating={training.rating} size="sm" />
+                    </div>
                     <div className="text-xs uppercase tracking-[0.18em] text-ink-soft">
                       {training.code}
                     </div>
@@ -375,13 +399,13 @@ export function TrainingManagementPanel({
               Prev
             </Button>
             <span className="text-sm font-medium">
-              {page} / {totalPages}
+              {currentPage} / {totalPages}
             </span>
             <Button
               type="button"
               variant="secondary"
               onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-              disabled={page === totalPages}
+              disabled={currentPage === totalPages}
             >
               Next
             </Button>

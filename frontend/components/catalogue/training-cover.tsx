@@ -1,7 +1,11 @@
+import { TrainingRecommendationStars } from "@/frontend/components/catalogue/training-recommendation-stars";
 import type { Training } from "@/frontend/types";
 
 type TrainingCoverProps = {
-  training: Pick<Training, "title" | "code" | "coverPalette" | "badge" | "nextSession" | "imageUrl">;
+  training: Pick<
+    Training,
+    "title" | "code" | "coverPalette" | "badge" | "nextSession" | "imageUrl" | "rating"
+  >;
   compact?: boolean;
 };
 
@@ -76,9 +80,18 @@ export function TrainingCover({ training, compact = false }: TrainingCoverProps)
         <div className={`mt-2 font-semibold leading-tight ${compact ? "text-xl" : "text-2xl"}`}>
           {training.title}
         </div>
-        {!compact && training.nextSession ? (
-          <div className="mt-2 text-sm text-white/78">Next: {training.nextSession}</div>
-        ) : null}
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="rounded-full bg-white/12 px-3 py-1.5 backdrop-blur-sm">
+            <TrainingRecommendationStars
+              rating={training.rating}
+              tone="light"
+              size={compact ? "sm" : "md"}
+            />
+          </div>
+          {!compact && training.nextSession ? (
+            <div className="text-sm text-white/78">Next: {training.nextSession}</div>
+          ) : null}
+        </div>
       </div>
     </div>
   );

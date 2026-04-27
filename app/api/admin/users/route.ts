@@ -12,6 +12,12 @@ import {
 const createUserSchema = z.object({
   name: z.string().min(2, "Name is required."),
   email: z.email("Use a valid email address."),
+  phoneNumber: z
+    .string()
+    .trim()
+    .min(8, "Phone number is required.")
+    .max(24, "Phone number is too long.")
+    .regex(/^[+()0-9\s-]+$/, "Use a valid phone number."),
   company: z.string().min(2, "Company is required."),
   department: z.string().min(2, "Department is required."),
   password: z.string().min(8, "Password must be at least 8 characters."),
@@ -67,11 +73,13 @@ export async function POST(request: Request) {
       firstName,
       lastName,
       email: parsed.data.email.trim().toLowerCase(),
+      phoneNumber: parsed.data.phoneNumber.trim(),
       uniqueId: `ADV-${Date.now().toString().slice(-8)}`,
       role,
       department: parsed.data.department.trim(),
       company: parsed.data.company.trim(),
       status: "active",
+      authProvider: "local",
       joinedAt: createdAt,
       avatar: `${firstName.charAt(0)}${lastName.charAt(0) || firstName.charAt(1) || ""}`.toUpperCase(),
       funnyAvatar: "Sunny Bunny",
@@ -80,7 +88,7 @@ export async function POST(request: Request) {
       passwordHash: await bcrypt.hash(parsed.data.password, 10),
       preferences: {
         language: "en",
-        theme: "light",
+        theme: "dark",
       },
       onboardingCompleted: false,
     });

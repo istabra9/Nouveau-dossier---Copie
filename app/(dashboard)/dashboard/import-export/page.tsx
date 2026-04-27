@@ -1,19 +1,20 @@
 import Link from "next/link";
 
-import { PageIntro } from "@/frontend/components/shared/page-intro";
 import { requireRole } from "@/backend/auth/guards";
+import { PageIntro } from "@/frontend/components/shared/page-intro";
 
 const exportLinks = [
-  { href: "/api/reports/excel?report=users", label: "Export users to Excel" },
-  { href: "/api/reports/excel?report=trainings", label: "Export trainings to Excel" },
   {
-    href: "/api/reports/excel?report=enrollments",
-    label: "Export enrollments to Excel",
+    href: "/api/reports/excel?report=all",
+    label: "Export everything to Excel",
+    description:
+      "One workbook with detailed tables for users, trainings, enrollments, revenue, and durations.",
   },
-  { href: "/api/reports/pdf?report=revenue", label: "Export revenue report to PDF" },
   {
-    href: "/api/reports/pdf?report=durations",
-    label: "Export duration report to PDF",
+    href: "/api/reports/pdf?report=all",
+    label: "Export everything to PDF",
+    description:
+      "One readable PDF with structured tables for users, trainings, enrollments, revenue, and durations.",
   },
 ];
 
@@ -54,15 +55,25 @@ export default async function ImportExportPage() {
         </div>
         <div className="surface-panel p-6">
           <h3 className="text-xl font-semibold">Export reports</h3>
+          <p className="mt-3 text-sm leading-6 text-ink-soft">
+            One click, one file. The users export now includes IDs, gender,
+            post, age, email, phone, training dates, in-training state, active
+            state, and extra operational details.
+          </p>
           <div className="mt-6 space-y-3">
             {exportLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="flex items-center justify-between rounded-[22px] border border-line bg-white/80 px-4 py-4 text-sm font-medium hover:bg-white"
+                className="flex items-center justify-between gap-4 rounded-[22px] border border-line bg-white/80 px-4 py-4 text-sm font-medium hover:bg-white"
               >
-                {link.label}
-                <span className="text-brand-600">Open</span>
+                <span>
+                  <span className="block">{link.label}</span>
+                  <span className="mt-1 block text-xs font-normal text-ink-soft">
+                    {link.description}
+                  </span>
+                </span>
+                <span className="shrink-0 text-brand-600">Download</span>
               </Link>
             ))}
           </div>

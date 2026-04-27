@@ -6,12 +6,11 @@ import { requireAuthenticatedUser } from "@/backend/auth/guards";
 import { getProfilePageData } from "@/backend/services/platform";
 import { ActivityLogPanel } from "@/frontend/components/dashboard/activity-log-panel";
 import { NotificationsPanel } from "@/frontend/components/dashboard/notifications-panel";
-import { ChatbotPanel } from "@/frontend/components/shared/chatbot-panel";
 import { PageIntro } from "@/frontend/components/shared/page-intro";
 import { ProfileSettingsForm } from "@/frontend/components/profile/profile-settings-form";
 import { Button } from "@/frontend/components/ui/button";
-import { getCurrentLocale } from "@/frontend/i18n/server";
 import { getMessages } from "@/frontend/i18n/messages";
+import { getCurrentLocale } from "@/frontend/i18n/server";
 import { formatDateLabel } from "@/frontend/utils/format";
 
 export default async function ProfilePage() {
@@ -157,41 +156,6 @@ export default async function ProfilePage() {
             </div>
           )}
         </section>
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
-        <section className="surface-panel space-y-4 p-6">
-          <h2 className="text-xl font-semibold">{copy.paymentHistory}</h2>
-          {profile.myPayments.length ? (
-            <div className="space-y-4">
-              {profile.myPayments.map((payment) => (
-                <div
-                  key={payment.id}
-                  className="rounded-[24px] border border-line bg-white/80 p-4"
-                >
-                  <div className="font-semibold">
-                    {payment.training?.title ?? payment.trainingSlug}
-                  </div>
-                  <div className="mt-2 text-sm text-ink-soft">
-                    {copy.invoice} {payment.invoiceNumber}
-                  </div>
-                  <div className="mt-1 text-sm text-ink-soft">
-                    {copy.paidOn}: {formatDateLabel(payment.paidAt, locale)}
-                  </div>
-                  <div className="mt-1 text-sm text-ink-soft">
-                    {copy.paymentMethod}: {payment.method}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-[24px] border border-dashed border-line bg-white/55 p-6 text-sm text-ink-soft">
-              {copy.noPayments}
-            </div>
-          )}
-        </section>
-
-        <ChatbotPanel recommendations={profile.recommendations} assistant="alexa" />
       </div>
 
       {profile.user ? <ProfileSettingsForm user={profile.user} /> : null}

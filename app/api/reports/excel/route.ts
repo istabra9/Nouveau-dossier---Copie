@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { getCurrentUser } from "@/backend/auth/session";
 import { buildExcelReport } from "@/backend/exports/reporting";
+import type { Role } from "@/frontend/types";
 
 const schema = z.enum([
   "users",
@@ -10,7 +11,10 @@ const schema = z.enum([
   "enrollments",
   "revenue",
   "durations",
+  "all",
 ]);
+
+const roleSchema = z.enum(["user", "admin", "super_admin"]);
 
 export async function GET(request: Request) {
   const user = await getCurrentUser();
@@ -19,15 +23,25 @@ export async function GET(request: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
   }
 
-  const report = schema.parse(new URL(request.url).searchParams.get("report"));
-  const workbook = await buildExcelReport(report);
+  const { searchParams } = new URL(request.url);
+  const report = schema.safeParse(searchParams.get("report"));
+
+  if (!report.success) {
+    return NextResponse.json({ message: "Invalid report type." }, { status: 400 });
+  }
+
+  const role = roleSchema.safeParse(searchParams.get("role"));
+  const workbook = await buildExcelReport(report.data, {
+    role: role.success ? (role.data as Role) : undefined,
+  });
+  const filenameSuffix = role.success ? `-${role.data}` : "";
 
   return new NextResponse(workbook, {
     status: 200,
     headers: {
       "Content-Type":
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename=\"advancia-${report}.xlsx\"`,
+      "Content-Disposition": `attachment; filename=\"advancia-${report.data}${filenameSuffix}.xlsx\"`,
     },
   });
 }

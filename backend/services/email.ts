@@ -59,7 +59,6 @@ class DevStubEmailService implements EmailService {
   async send(message: EmailMessage): Promise<SentEmailRecord> {
     const record = newRecord(message);
     await persist(record);
-    // eslint-disable-next-line no-console
     console.info(
       `[email:dev-stub] -> ${record.to} | ${record.subject}\n${record.body}\n`,
     );
@@ -88,7 +87,6 @@ class SmtpEmailService implements EmailService {
         html: message.html ?? message.body,
       });
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(
         `[email:smtp] failed to send to ${record.to}: ${(error as Error).message}`,
       );
@@ -133,11 +131,9 @@ export function getEmailService(): EmailService {
     const from =
       process.env.SMTP_FROM ?? `Advancia Trainings <${process.env.SMTP_USER}>`;
     instance = new SmtpEmailService(transporter, from);
-    // eslint-disable-next-line no-console
     console.info(`[email] SMTP transport ready (host=${process.env.SMTP_HOST})`);
   } else {
     instance = new DevStubEmailService();
-    // eslint-disable-next-line no-console
     console.info(
       "[email] SMTP_HOST/SMTP_USER/SMTP_PASSWORD not set - using dev stub",
     );
@@ -179,6 +175,12 @@ export type RejectionEmailInput = {
   userName: string;
   trainingTitle: string;
   reason?: string;
+  startDate?: string;
+  endDate?: string;
+  location?: string;
+  trainerName?: string;
+  trainerEmail?: string;
+  description?: string;
   appUrl?: string;
 };
 
@@ -295,11 +297,35 @@ export function renderRejectionEmail(input: RejectionEmailInput) {
   const reasonBlock = input.reason
     ? `<p style="margin:12px 0;padding:12px 14px;background:#fff5f5;border-left:3px solid #df3648;border-radius:6px;color:#4a3438;"><em>${input.reason}</em></p>`
     : "";
+  const description = input.description
+    ? `<p style="margin:10px 0;color:#4a3438;">${input.description}</p>`
+    : "";
+  const hasDetails =
+    input.startDate ||
+    input.endDate ||
+    input.location ||
+    input.trainerName ||
+    input.trainerEmail;
+  const details = hasDetails
+    ? `
+    <p style="margin:16px 0 6px;color:#8a5a60;font-size:12px;text-transform:uppercase;letter-spacing:0.18em;">Training you requested</p>
+    <table style="width:100%;border-collapse:collapse;margin:4px 0 18px;">
+      ${row("Training", input.trainingTitle)}
+      ${row("Start", input.startDate)}
+      ${row("End", input.endDate)}
+      ${row("Location", input.location)}
+      ${row("Trainer", input.trainerName)}
+      ${row("Trainer email", input.trainerEmail)}
+    </table>
+  `
+    : "";
 
   const html = shell(`
     <h2 style="margin:0 0 12px;color:#91182f;">Hello ${input.userName},</h2>
     <p style="margin:0 0 12px;">Thank you for your interest in <strong>${input.trainingTitle}</strong>.</p>
     <p style="margin:0 0 12px;">After reviewing your request, we are unable to confirm this enrollment at this time.</p>
+    ${description}
+    ${details}
     ${reasonBlock}
     <p style="margin:14px 0;">We would love to welcome you to another session - browse our catalogue and find a program that fits.</p>
     <p style="margin:18px 0;">
@@ -313,6 +339,11 @@ export function renderRejectionEmail(input: RejectionEmailInput) {
     "",
     `Thank you for your interest in "${input.trainingTitle}".`,
     "After reviewing your request, we are unable to confirm this enrollment at this time.",
+    input.startDate ? `Start: ${input.startDate}` : null,
+    input.endDate ? `End: ${input.endDate}` : null,
+    input.location ? `Location: ${input.location}` : null,
+    input.trainerName ? `Trainer: ${input.trainerName}` : null,
+    input.trainerEmail ? `Trainer email: ${input.trainerEmail}` : null,
     input.reason ? `Reason: ${input.reason}` : null,
     "",
     `Explore other trainings: ${catalogueHref}`,

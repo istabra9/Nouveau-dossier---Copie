@@ -7,7 +7,6 @@ import {
   ChartColumnIncreasing,
   LayoutDashboard,
   Megaphone,
-  Settings,
   Shield,
   Upload,
   UserCircle2,
@@ -25,7 +24,6 @@ const iconMap = {
   security: Shield,
   user: UserCircle2,
   notifications: Megaphone,
-  settings: Settings,
 };
 
 type SidebarMessages = ReturnType<typeof useLocale>["messages"]["sidebar"];
@@ -33,24 +31,23 @@ type SidebarMessages = ReturnType<typeof useLocale>["messages"]["sidebar"];
 function getLinks(role: SessionUser["role"], t: SidebarMessages) {
   if (role === "super_admin") {
     return [
-      { href: "/dashboard/super-admin", label: t.superAdmin.executive, icon: "security" },
+      { href: "/dashboard/super-admin/management", label: t.superAdmin.management, icon: "security" },
       { href: "/dashboard/super-admin#users", label: t.superAdmin.users, icon: "user" },
+      { href: "/dashboard/super-admin", label: t.superAdmin.executive, icon: "dashboard" },
       { href: "/dashboard/super-admin#trainings", label: t.superAdmin.trainings, icon: "analytics" },
       { href: "/dashboard/import-export", label: t.superAdmin.importExport, icon: "import" },
       { href: "/dashboard/super-admin#insights", label: t.superAdmin.insights, icon: "notifications" },
-      { href: "/profile", label: t.superAdmin.settings, icon: "settings" },
       { href: "/profile", label: t.superAdmin.profile, icon: "user" },
     ] as const;
   }
 
   if (role === "admin") {
     return [
-      { href: "/dashboard/admin", label: t.admin.dashboard, icon: "analytics" },
-      { href: "/dashboard/admin#users", label: t.admin.users, icon: "user" },
+      { href: "/dashboard/admin/users", label: t.admin.users, icon: "user" },
+      { href: "/dashboard/admin", label: t.admin.dashboard, icon: "dashboard" },
       { href: "/dashboard/import-export", label: t.admin.importExport, icon: "import" },
       { href: "/dashboard/admin#stats", label: t.admin.stats, icon: "analytics" },
       { href: "/dashboard/admin#notifications", label: t.admin.notifications, icon: "notifications" },
-      { href: "/profile", label: t.admin.settings, icon: "settings" },
       { href: "/profile", label: t.admin.profile, icon: "user" },
     ] as const;
   }
@@ -112,13 +109,6 @@ export function DashboardSidebar({ user }: { user: SessionUser }) {
           );
         })}
       </nav>
-
-      <div className="mt-auto rounded-[28px] border border-line bg-background p-5">
-        <div className="text-xs uppercase tracking-[0.24em] text-brand-600">
-          {t.brandNoteEyebrow}
-        </div>
-        <p className="mt-3 text-sm leading-7 text-ink-soft">{t.brandNoteBody}</p>
-      </div>
     </aside>
   );
 }

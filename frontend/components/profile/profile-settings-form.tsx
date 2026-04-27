@@ -27,7 +27,7 @@ export function ProfileSettingsForm({
 }) {
   const router = useRouter();
   const { locale, setLocale } = useLocale();
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const [profileState, setProfileState] = useState({
     firstName: user.firstName,
     lastName: user.lastName,
@@ -38,7 +38,7 @@ export function ProfileSettingsForm({
     funnyAvatar: user.funnyAvatar ?? funnyAvatars[0],
     profilePicture: user.profilePicture ?? "",
     language: user.preferences?.language ?? locale,
-    theme: user.preferences?.theme ?? theme,
+    theme: user.preferences?.theme ?? "dark",
   });
   const [passwordState, setPasswordState] = useState({
     currentPassword: "",

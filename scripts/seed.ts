@@ -16,7 +16,6 @@ import { ActivityLogModel } from "@/backend/models/activity-log";
 import { CategoryModel } from "@/backend/models/category";
 import { EnrollmentModel } from "@/backend/models/enrollment";
 import { EnrollmentRequestModel } from "@/backend/models/enrollment-request";
-import { GameScoreModel } from "@/backend/models/game-score";
 import { NotificationModel } from "@/backend/models/notification";
 import { PaymentModel } from "@/backend/models/payment";
 import { ScheduleModel } from "@/backend/models/schedule";
@@ -36,7 +35,6 @@ async function seed() {
     UserModel.deleteMany({}),
     EnrollmentModel.deleteMany({}),
     EnrollmentRequestModel.deleteMany({}),
-    GameScoreModel.deleteMany({}),
     PaymentModel.deleteMany({}),
     ScheduleModel.deleteMany({}),
     NotificationModel.deleteMany({}),
@@ -79,38 +77,6 @@ async function seed() {
       requestedAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
     });
   }
-
-  // Demo game scores for the leaderboard.
-  const leaderboardSeeds = [
-    { user: "usr-user", moves: 18, durationSeconds: 42 },
-    { user: "usr-ops", moves: 22, durationSeconds: 56 },
-    { user: "usr-data", moves: 20, durationSeconds: 48 },
-    { user: "usr-lead", moves: 25, durationSeconds: 64 },
-    { user: "usr-finance", moves: 28, durationSeconds: 71 },
-  ];
-
-  await Promise.all(
-    leaderboardSeeds.map((seed, index) => {
-      const participant = mockDataset.users.find(
-        (entry) => entry.id === seed.user,
-      );
-      if (!participant) return Promise.resolve();
-      const score = Math.max(0, 1000 - seed.moves * 10 - seed.durationSeconds);
-      return GameScoreModel.create({
-        id: `gs-seed-${index}`,
-        userId: participant.id,
-        userName: participant.name,
-        userAvatar: participant.funnyAvatar ?? participant.avatar,
-        gameType: "memory-match",
-        score,
-        moves: seed.moves,
-        durationSeconds: seed.durationSeconds,
-        playedAt: new Date(
-          Date.now() - 1000 * 60 * 60 * 24 * (index + 1),
-        ).toISOString(),
-      });
-    }),
-  );
 
   console.log("Seed completed successfully.");
   await mongoose.disconnect();

@@ -77,7 +77,6 @@ export async function POST(request: Request) {
       meta: { userId: user.id, resent: "true" },
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error(
       `[auth:resend] failed to send confirmation email to ${user.email}:`,
       error,

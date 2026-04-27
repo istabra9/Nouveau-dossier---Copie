@@ -9,6 +9,9 @@ type BrandMarkProps = {
 };
 
 export function BrandMark({ className, compact = false }: BrandMarkProps) {
+  const width = compact ? 170 : 244;
+  const height = compact ? 40 : 57;
+
   return (
     <Link
       href="/"
@@ -19,17 +22,24 @@ export function BrandMark({ className, compact = false }: BrandMarkProps) {
         className,
       )}
     >
-      <Image
-        src="/advancia-logo.svg"
-        alt="Advancia Training"
-        width={compact ? 170 : 244}
-        height={compact ? 40 : 57}
-        priority={!compact}
+      <span
         className={cn(
-          "h-auto w-full transition duration-200 group-hover:-translate-y-0.5",
-          compact ? "max-w-[170px]" : "max-w-[244px]",
+          "brand-mark-shell flex items-center justify-center rounded-[24px] transition duration-200 group-hover:-translate-y-0.5",
+          compact ? "px-3 py-2" : "px-4 py-3",
         )}
-      />
+      >
+        <Image
+          src="/advancia-logo.svg"
+          alt="Advancia Training"
+          width={width}
+          height={height}
+          priority={!compact}
+          className={cn(
+            "h-auto w-full",
+            compact ? "max-w-[170px]" : "max-w-[244px]",
+          )}
+        />
+      </span>
     </Link>
   );
 }

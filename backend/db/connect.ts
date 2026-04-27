@@ -33,7 +33,7 @@ export async function connectToDatabase() {
   if (!cache.promise) {
     cache.promise = mongoose.connect(mongoUri, {
       bufferCommands: false,
-      dbName: "advancia-trainings",
+      dbName: "advancia",
     });
   }
 
