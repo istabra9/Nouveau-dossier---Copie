@@ -28,10 +28,14 @@ export function toSessionUser(user: UserRecord): SessionUser {
   };
 }
 
+function isHttps() {
+  return (process.env.NEXT_PUBLIC_APP_URL ?? "").startsWith("https://");
+}
+
 export function getSessionCookieOptions() {
   return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isHttps(),
     sameSite: "lax" as const,
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
