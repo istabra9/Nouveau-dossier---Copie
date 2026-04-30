@@ -54,12 +54,33 @@ if exist ".git" (
 REM --- 3. Install dependencies --------------------------------------------
 echo.
 echo [2/5] Installing dependencies (npm ci preferred, falls back to npm install)...
-call npm ci 2>nul
-if errorlevel 1 (
-    echo npm ci failed ^(lockfile may be out of sync^). Falling back to npm install...
+call npm ci
+set INSTALL_RC=%errorlevel%
+
+if not %INSTALL_RC% == 0 (
+    echo.
+    echo npm ci failed ^(lockfile may be out of sync^) - removing node_modules and falling back to npm install...
+    if exist node_modules rmdir /s /q node_modules
     call npm install
-    if errorlevel 1 (
-        echo [ERROR] Dependency install failed. See errors above.
+    set INSTALL_RC=%errorlevel%
+)
+
+if not %INSTALL_RC% == 0 (
+    echo [ERROR] Dependency install failed. See errors above.
+    pause
+    exit /b 1
+)
+
+REM Verify the next CLI actually got installed before trying to build
+if not exist "node_modules\.bin\next.cmd" (
+    echo.
+    echo [WARN] node_modules\.bin\next.cmd is missing after install - forcing clean reinstall...
+    if exist node_modules rmdir /s /q node_modules
+    call npm install
+    if not exist "node_modules\.bin\next.cmd" (
+        echo [ERROR] next CLI still missing after clean reinstall.
+        echo         Check the npm install output above for the real error
+        echo         ^(common causes: antivirus blocking writes, path with special chars, no internet^).
         pause
         exit /b 1
     )
